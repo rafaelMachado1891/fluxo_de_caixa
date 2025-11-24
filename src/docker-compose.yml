@@ -1,0 +1,43 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: fluxo_de_caixa
+    environment:
+      POSTGRES_USER: ${USER}
+      POSTGRES_PASSWORD: ${PASSWORD}  
+      POSTGRES_DB: ${DATABASE}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - postgree_network
+
+  pgadmin:
+      container_name: pgadmin_web
+      image: dpage/pgadmin4
+      environment:
+        PGADMIN_DEFAULT_EMAIL: rafa@machado.dev
+        PGADMIN_DEFAULT_PASSWORD: postgres
+        PGADMIN_LISTEN_PORT: 5050
+        PGADMIN_CONFIG_SERVER_MODE: 'False'
+      volumes:
+        - pgadmin_data:/var/lib/pgadmin
+        - ./files:/files
+      ports:
+        - 5050:5050
+      networks:
+        - postgree_network
+
+networks:
+    postgree_network:
+      driver: bridge
+
+volumes:
+    postgres_data:
+    pgadmin_data:
