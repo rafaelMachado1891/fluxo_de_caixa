@@ -12,31 +12,41 @@ sources:
            description: 'ID do titulo de pagamento cadastrado no sistema de origem'
            data_type: TEXT
            tests:
-            - not_null  # Garante que não há valores nulos           
-         - name: data
-           description: 'Data da emissao do pedido'
-           data_type: DATE
-         - name: codigo
-           description: 'identificador unico do produto'
-           data_type: TEXT
-         - name: "referencia"
-           description: 'descricao resumida do produto'
+            - not_null  # Garante que não há valores nulos    
+            - unique        
+         - name: tipo_credor
+           description: 'identificador do tipo de nota fiscal o titulo é proveniente ex: "entrada de nota fiscal", "saida de nota fiscal" verificar utilidade da coluna '
+           data_type: INTEGER
+           tests:
+            - not_null
+         - name: id_cliente
+           description: 'identificar unico do cliente'
            data_type: TEXT
            tests:
-            - not_null  # Garante que os valores estão em uma lista específica
-         - name: "custo_medio" 
-           description: 'Custo unitario do produto'
-         - name: "quantidade"
-           description: 'quantidade da venda'
-           data_type: INTEGER
-         - name: preco
-           description: 'valor unitario do produto'
+            - not_null
+         - name: "tipo_pagamento"
+           description: 'meio de pagamento do titulo: "duplicata/ cartão/ carteira", verificar a utilidade da coluna'
+           data_type: TEXT
+         - name: "data_emissao" 
+           description: 'data de emissao do titulo'
+           data_type: DATE
+           tests: 
+            - not_null
+         - name: "vencimento"
+           description: 'data de vencimento do titulo'
+           data_type: DATE
+           tests:
+            - not_null
+         - name: valor_titulo
+           description: 'valor monetario do titulo'
            data_type: DECIMAL
-         - name: total
-           description: 'valor total da venda multiplicacao da quantidade pelo preco unitario'
+           tests:
+            - not_null
+         - name: "instituicao"
+           description: 'identificador da instituicao de pagamento exemplo: "banco" '
            data_type: DECIMAL
-         - name: linha
-           description: 'identificacao da linha do produto'
+         - name: situacao_titulo
+           description: 'marcacao identificando se titulo esta pago, pendent ou parcial ('')'
          - name: grupo
            description: 'categoria/tipo do produto'
       - name: produtos
