@@ -1,0 +1,69 @@
+version: 2
+
+sources:
+  - name: db
+    schema: public
+    tables: 
+
+      - name: tbl_fluxo
+        description: tabela que contem os dados de lançamento dos titulos bancarios no erp de origem
+        columns:
+         - name: numero_titulo
+           description: 'ID do titulo de pagamento cadastrado no sistema de origem'
+           data_type: TEXT
+           tests:
+            - not_null  # Garante que não há valores nulos           
+         - name: data
+           description: 'Data da emissao do pedido'
+           data_type: DATE
+         - name: codigo
+           description: 'identificador unico do produto'
+           data_type: TEXT
+         - name: "referencia"
+           description: 'descricao resumida do produto'
+           data_type: TEXT
+           tests:
+            - not_null  # Garante que os valores estão em uma lista específica
+         - name: "custo_medio" 
+           description: 'Custo unitario do produto'
+         - name: "quantidade"
+           description: 'quantidade da venda'
+           data_type: INTEGER
+         - name: preco
+           description: 'valor unitario do produto'
+           data_type: DECIMAL
+         - name: total
+           description: 'valor total da venda multiplicacao da quantidade pelo preco unitario'
+           data_type: DECIMAL
+         - name: linha
+           description: 'identificacao da linha do produto'
+         - name: grupo
+           description: 'categoria/tipo do produto'
+      - name: produtos
+        description: 'tabela geral com todos os produtos'
+        columns:
+         - name: codigo
+           description: 'identificado unico do produto'
+         - name: descricao
+           description: 'descricao do produto'
+         - name: referencia
+           description: 'descricao resumida do produto'
+         - name: linha
+           description: 'identificacao da linha do produto'
+         - name: data_ultimo_movimento
+           description: 'registro da ultima movimentacao no banco de dados de origem'
+      - name: estoque_minimo
+        description: 'tabela geral com todos os produtos'
+        columns:
+          - name: codigo
+            description: 'identificado unico do produto'
+          - name: descricao
+            description: 'descricao do produto'
+          - name: referencia
+            description: 'descricao resumida do produto'
+          - name: estoque_minimo
+            description: 'estoque minimo do produto'
+          - name: linha
+            description: 'identificacao da linha do produto'
+          - name: data_alteracao_estoque
+            description: 'registro da data de alteração do estoque no sistema de origem'
