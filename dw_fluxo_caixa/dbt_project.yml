@@ -31,6 +31,15 @@ clean-targets:         # directories to be removed by `dbt clean`
 # files using the `{{ config(...) }}` macro.
 models:
   dw_fluxo_caixa:
-    # Config indicated by + and applies to all files under models/example/
-    example:
+    
+    staging: 
+      +schema: staging
       +materialized: view
+    
+    intermediate:
+      +schema: intermediate
+      +materialized: view
+
+    marts:
+      +schema: marts
+      +materialized: table  

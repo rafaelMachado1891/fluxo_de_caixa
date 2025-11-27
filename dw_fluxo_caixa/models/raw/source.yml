@@ -44,36 +44,21 @@ sources:
             - not_null
          - name: "instituicao"
            description: 'identificador da instituicao de pagamento exemplo: "banco" '
-           data_type: DECIMAL
+           data_type: INTEGER
          - name: situacao_titulo
-           description: 'marcacao identificando se titulo esta pago, pendent ou parcial ('')'
-         - name: grupo
-           description: 'categoria/tipo do produto'
-      - name: produtos
-        description: 'tabela geral com todos os produtos'
-        columns:
-         - name: codigo
-           description: 'identificado unico do produto'
-         - name: descricao
-           description: 'descricao do produto'
-         - name: referencia
-           description: 'descricao resumida do produto'
-         - name: linha
-           description: 'identificacao da linha do produto'
-         - name: data_ultimo_movimento
-           description: 'registro da ultima movimentacao no banco de dados de origem'
-      - name: estoque_minimo
-        description: 'tabela geral com todos os produtos'
-        columns:
-          - name: codigo
-            description: 'identificado unico do produto'
-          - name: descricao
-            description: 'descricao do produto'
-          - name: referencia
-            description: 'descricao resumida do produto'
-          - name: estoque_minimo
-            description: 'estoque minimo do produto'
-          - name: linha
-            description: 'identificacao da linha do produto'
-          - name: data_alteracao_estoque
-            description: 'registro da data de alteração do estoque no sistema de origem'
+           description: 'marcacao identificando se titulo esta pago, pendente ou parcial ('')'
+           data_type: INTEGER
+           tests:
+            - not_null
+         - name: "conta_contabil_credito"
+           description: 'identificador da conta contabil de credito'
+           data_type: INTEGER
+         - name: "conta_contabil_debito"
+           description: 'identificador da conta contabil quando debito'
+           data_type: INTEGER
+         - name: "codigo_conta"
+           description: 'mascara da conta contabil do plano de contas'
+           data_type: TEXT
+         - name: "descricao"
+           description: 'descricao da conta contabil'
+           data_type: TEXT
