@@ -15,7 +15,7 @@ sources:
             - not_null  # Garante que não há valores nulos    
             - unique        
          - name: tipo_credor
-           description: 'identificador do tipo de nota fiscal o titulo é proveniente ex: "entrada de nota fiscal", "saida de nota fiscal" verificar utilidade da coluna '
+           description: 'identificador do tipo de nota fiscal o titulo é proveniente ex: "entrada de nota fiscal", "saida de nota fiscal" ou "conhecimento de frete" verificar utilidade da coluna '
            data_type: INTEGER
            tests:
             - not_null
@@ -56,9 +56,13 @@ sources:
          - name: "conta_contabil_debito"
            description: 'identificador da conta contabil quando debito'
            data_type: INTEGER
-         - name: "codigo_conta"
+         - name: "debito_codigo_conta"
            description: 'mascara da conta contabil do plano de contas'
            data_type: TEXT
-         - name: "descricao"
+         - name: "debito_descricao"
            description: 'descricao da conta contabil'
            data_type: TEXT
+         - name: "credito_codigo_conta"
+           description: 'mascara da conta contabil do plano de contas'
+         - name: "credito_descricao"
+           description: 'descricao da conta contabil'

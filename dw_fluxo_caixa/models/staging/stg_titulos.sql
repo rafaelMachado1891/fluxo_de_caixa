@@ -7,10 +7,29 @@ WITH titulos AS (
 tbl_titulos_transformada AS (
     SELECT 
         numero_titulo:: TEXT AS numero_titulo,
-        TO_CHAR(data_emissao:: DATE, 'DD-MM-YYYY') AS data_emissao,
-        TO_CHAR(vencimento:: DATE, 'DD-MM-YYYY') AS vencimento,
-        CAST(REPLACE(valor_titulo,',' , '.')AS DECIMAL) AS valor_titulo
+        data_emissao:: DATE AS data_emissao,
+        vencimento:: DATE AS vencimento,
+        REPLACE(valor_titulo,',' , '.'):: DECIMAL AS valor_titulo,
+        CASE WHEN
+            tipo_credor = 2 OR tipo_credor = 3 THEN 'S'
+            ELSE 'E' END:: text AS tipo_pagamento,
+        instituicao:: TEXT AS instituicao,
+        situacao_titulo:: INTEGER AS situacao_titulo,
+        conta_contabil_credito:: INTEGER AS conta_contabil_credito,
+        conta_contabil_debito:: INTEGER AS conta_contabil_debito,
+        id_cliente:: INTEGER AS id_cliente
     FROM titulos
 )
 
-SELECT * FROM tbl_titulos_transformada
+SELECT 
+    numero_titulo,
+    data_emissao,
+    vencimento,
+    valor_titulo,
+    tipo_pagamento,
+    instituicao,
+    situacao_titulo,
+    conta_contabil_credito,
+    conta_contabil_debito,
+    id_cliente
+FROM tbl_titulos_transformada
