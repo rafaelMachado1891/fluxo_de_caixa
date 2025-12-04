@@ -45,6 +45,11 @@ class CarregarCsv():
         - metodo: 'fail', 'replace' ou 'append'
         - index: se deve salvar o índice
         """
+        if metodo == 'replace':
+            with con.connect() as conn:
+                conn.execute(text(f"DROP TABLE IF EXISTS {tabela} CASCADE"))
+                conn.commit()
+                
         self.df.to_sql(
             name=tabela,
             con=con,
