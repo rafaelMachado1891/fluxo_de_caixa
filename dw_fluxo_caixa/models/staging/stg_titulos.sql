@@ -15,8 +15,8 @@ tbl_titulos_transformada AS (
             ELSE 'E' END:: text AS tipo_pagamento,
         instituicao:: TEXT AS instituicao,
         situacao_titulo:: INTEGER AS situacao_titulo,
-        conta_contabil_credito:: INTEGER AS conta_contabil_credito,
-        conta_contabil_debito:: INTEGER AS conta_contabil_debito,
+        codigo_credito:: INTEGER AS conta_contabil_credito,
+        codigo_debito:: INTEGER AS conta_contabil_debito,
         id_cliente:: INTEGER AS id_cliente
     FROM titulos
 )
