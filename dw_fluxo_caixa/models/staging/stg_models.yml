@@ -48,18 +48,15 @@ models:
   - name: stg_plano_contas
     description: "tabela que contem o plano de contas"
     columns:
-         - name: conta_contabil_credito
-           description: 'identificacao da conta contabil'
+         - name: codigo
+           description: 'identificador unico da conta contabil'
            data_type: INTEGER
-         - name: conta_contabil_debito
-           description: "identificacao da conta contabil"
-           data_type: INTEGER
-         - name: debito_codigo_conta
-           description: "codigo da conta contabil tipo debito"
+         - name: codigo_conta_contabil
+           description: "codigo hierarquico da conta contabil"
            data_type: TEXT
-         - name: credito_codigo_conta
-           description: "codigo da conta contabil tipo credito"
-         - name: debito_descricao
-           description: "descricao da conta contabil tipo debito"
-         - name: credito_descricao
-           description: "descricao da conta contabil tipo credito"
+         - name: conta_contabil
+           description: "descricao da conta contabil"
+           data_type: TEXT
+         - name: data_inclusao
+           description: "data de inclusao no sistema de origem"
+           data_type: DATE

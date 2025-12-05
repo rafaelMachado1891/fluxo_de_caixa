@@ -1,18 +1,18 @@
 WITH plano_contas AS (
-    SELECT
+    SELECT 
         codigo,
         codigo_conta,
         descricao,
-        DataInclusao
+        "DataInclusao"
     FROM 
-        {{ source('fluxo_db', 'tbl_plano_de_contas') }}
+        {{ source('fluxo_db', 'tbl_plano_contas') }}
 ),
 contas_tratadas AS (
     SELECT
         codigo:: INTEGER AS codigo,
         codigo_conta:: TEXT AS codigo_conta_contabil,
         descricao:: TEXT AS conta_contabil,
-        DataInclusao:: DATE AS data_inclusao
+        "DataInclusao":: DATE AS data_inclusao
     FROM plano_contas
 )
 
@@ -20,5 +20,5 @@ SELECT
   codigo,
   codigo_conta_contabil,
   conta_contabil,
-  Datainclusao
+  data_inclusao
 FROM contas_tratadas

@@ -3,7 +3,8 @@ SELECT
     valor_titulo,
     tipo_pagamento,
     situacao_titulo,
-    vencimento
+    vencimento,
+    data_pagamento
 FROM 
     {{ ref('int_titulos') }}
 ),
@@ -26,5 +27,7 @@ SELECT
 FROM mart_titulos a
 JOIN dim_date b 
 ON a.vencimento = b.data
+LEFT JOIN dim_date c
+ON a.data_pagamento = c.data
 WHERE a.situacao_titulo = 1
 GROUP BY b.nome_do_mes, a.tipo_pagamento, b.mes, b.ano
