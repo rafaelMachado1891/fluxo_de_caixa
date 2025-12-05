@@ -1,7 +1,7 @@
 version: 2
 
 sources:
-  - name: db
+  - name: fluxo_db
     schema: public
     tables: 
 
@@ -56,13 +56,25 @@ sources:
          - name: "conta_contabil_debito"
            description: 'identificador da conta contabil quando debito'
            data_type: INTEGER
-         - name: "debito_codigo_conta"
-           description: 'mascara da conta contabil do plano de contas'
-           data_type: TEXT
          - name: "debito_descricao"
            description: 'descricao da conta contabil'
            data_type: TEXT
-         - name: "credito_codigo_conta"
-           description: 'mascara da conta contabil do plano de contas'
          - name: "credito_descricao"
            description: 'descricao da conta contabil'
+      - name: tbl_plano_de_contas
+        description: "plano de contas do sistema ERP"
+        columns: 
+          - name: codigo
+            description: " identificador unico da conta contábil"
+            data_type: INTEGER
+            tests:
+              - not_null
+          - name: codigo_conta
+            description: "hierarquia da conta contabil"
+            data_type: TEXT          
+          - name: descricao
+            description: descricao da conta contabil
+            data_type: TEXT
+          - name: DataInclusao
+            description: "data de inclusao do cadastro no sistema"
+            data_type: DATE

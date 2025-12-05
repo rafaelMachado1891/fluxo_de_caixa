@@ -1,30 +1,24 @@
 WITH plano_contas AS (
     SELECT
-        conta_contabil_credito,
-        conta_contabil_debito,
-        debito_codigo_conta,
-        debito_descricao,
-        credito_codigo_conta,
-        credito_descricao
+        codigo,
+        codigo_conta,
+        descricao,
+        DataInclusao
     FROM 
-        {{ source('db', 'tbl_fluxo') }}
+        {{ source('fluxo_db', 'tbl_plano_de_contas') }}
 ),
 contas_tratadas AS (
     SELECT
-        conta_contabil_credito:: INTEGER AS conta_contabil_credito,
-        conta_contabil_debito:: INTEGER AS conta_contabil_debito,
-        debito_codigo_conta:: TEXT AS debito_codigo_conta,
-        credito_codigo_conta:: TEXT AS credito_codigo_conta,
-        debito_descricao:: TEXT AS debito_descricao,
-        credito_descricao:: TEXT AS credito_descricao
+        codigo:: INTEGER AS codigo,
+        codigo_conta:: TEXT AS codigo_conta_contabil,
+        descricao:: TEXT AS conta_contabil,
+        DataInclusao:: DATE AS data_inclusao
     FROM plano_contas
 )
 
-SELECT DISTINCT
-    conta_contabil_credito,
-    conta_contabil_debito,
-    debito_codigo_conta,
-    credito_codigo_conta,
-    debito_descricao,
-    credito_descricao
+SELECT 
+  codigo,
+  codigo_conta_contabil,
+  conta_contabil,
+  Datainclusao
 FROM contas_tratadas
