@@ -6,6 +6,10 @@ WITH plano_contas AS (
         data_inclusao
     FROM 
         {{ ref('stg_plano_contas') }}
+),
+
+plano_contas_tratado AS (
+    INSERT INTO plano_contas
 )
 
 SELECT * FROM plano_contas
