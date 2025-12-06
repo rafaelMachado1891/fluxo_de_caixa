@@ -31,7 +31,7 @@ SELECT
     tipo_pagamento,
     instituicao,
     situacao_titulo,
-    conta_contabil_credito,
-    conta_contabil_debito,
+    COALESCE(conta_contabil_credito,0) AS conta_contabil_credito,
+    COALESCE(conta_contabil_debito,0) AS conta_contabil_debito,
     id_cliente
 FROM tbl_titulos_transformada

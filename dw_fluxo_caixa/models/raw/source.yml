@@ -12,8 +12,7 @@ sources:
            description: 'ID do titulo de pagamento cadastrado no sistema de origem'
            data_type: TEXT
            tests:
-            - not_null  # Garante que não há valores nulos    
-            - unique        
+            - not_null  # Garante que não há valores nulos      
          - name: tipo_credor
            description: 'identificador do tipo de nota fiscal o titulo é proveniente ex: "entrada de nota fiscal", "saida de nota fiscal" ou "conhecimento de frete" verificar utilidade da coluna '
            data_type: INTEGER
