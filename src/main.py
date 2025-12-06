@@ -16,4 +16,21 @@ carga_fluxo.carregar_no_banco(
     index=False
 )
 
+
+plano_contas = ('C:/Users/rafad/Documents/Repositorios_Git/fluxo_de_caixa/src/data/plano_contas.csv')
+
+carga_plano_contas = CarregarCsv(plano_contas)
+
+carga_plano_contas.carregar_csv()
+
+carga_plano_contas.carregar_no_banco(
+    tabela="tbl_plano_contas",
+    con=engine,
+    metodo="replace",
+    index=False
+)
+
 print("✅ Dados carregados com sucesso na tabela tbl_fluxo")
+
+print("✅ Dados carregados com sucesso na tabela tbl_plano_contas")
+

@@ -1,11 +1,11 @@
 WITH plano_contas AS (
-    SELECT
+    SELECT 
         codigo,
         codigo_conta,
         descricao,
         "DataInclusao"
     FROM 
-        {{ source('fluxo_db', 'tbl_plano_de_contas') }}
+        {{ source('fluxo_db', 'tbl_plano_contas') }}
 ),
 contas_tratadas AS (
     SELECT

@@ -37,6 +37,9 @@ sources:
            data_type: DATE
            tests:
             - not_null
+         - name: "data_pagamento"
+           description: "data de pagamento do titulo"
+           data_type: DATE
          - name: valor_titulo
            description: 'valor monetario do titulo'
            data_type: DECIMAL
@@ -61,11 +64,11 @@ sources:
            data_type: TEXT
          - name: "credito_descricao"
            description: 'descricao da conta contabil'
-      - name: tbl_plano_de_contas
+      - name: tbl_plano_contas
         description: "plano de contas do sistema ERP"
         columns: 
           - name: codigo
-            description: " identificador unico da conta contábil"
+            description: "identificador unico da conta contábil"
             data_type: INTEGER
             tests:
               - not_null

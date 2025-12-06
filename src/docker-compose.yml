@@ -9,14 +9,14 @@ services:
     ports:
       - "5440:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_fluxo_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
     networks:
-      - postgree_network
+      - postgres_fluxo_network
 
   pgadmin:
       container_name: pgadmin_fluxo
@@ -27,17 +27,17 @@ services:
         PGADMIN_LISTEN_PORT: 5050
         PGADMIN_CONFIG_SERVER_MODE: 'False'
       volumes:
-        - pgadmin_data:/var/lib/pgadmin
+        - pgadmin_fluxo_data:/var/lib/pgadmin
         - ./files:/files
       ports:
         - 5050:5050
       networks:
-        - postgree_network
+        - postgres_fluxo_network
 
 networks:
-    postgree_network:
+    postgres_fluxo_network:
       driver: bridge
 
 volumes:
-    postgres_data:
-    pgadmin_data:
+    postgres_fluxo_data:
+    pgadmin_fluxo_data:
