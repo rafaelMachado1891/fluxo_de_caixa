@@ -34,7 +34,7 @@ models:
            description: 'instituicao de pagamento'
          - name: situacao_titulo
            description: 'indica a situacao do titulo (pago/pendente/parcial)'
-           data_type: INTEGER
+           data_type: TEXT
            tests:
             - not_null
          - name: id_conta_contabil
@@ -44,7 +44,7 @@ models:
             - not_null
             - relationships:
                 to: ref('int_plano_contas')
-                field: id_conta_contabil
+                field: codigo
          - name: id_cliente
            description: 'identificar unico do cliente'
            data_type: INTEGER

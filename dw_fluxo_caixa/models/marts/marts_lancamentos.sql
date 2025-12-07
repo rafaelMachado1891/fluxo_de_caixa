@@ -1,34 +1,23 @@
 WITH lancamentos AS (
     SELECT
-        SUM(valor_titulo) AS total_lancamento,
+        numero_titulo,
+        data_emissao,
+        vencimento,
+        data_pagamento,
+        vencimento - data_emissao AS prazo,
+        valor_titulo,
         id_conta_contabil,
-        tipo_pagamento
+        tipo_pagamento,
+        situacao_titulo,     
+        instituicao,
+        id_cliente,
+        CASE 
+            WHEN data_pagamento = NULL THEN 'PROJETADO'
+            ELSE 'REALIZADO'
+        END AS tipo_fluxo
 
     FROM 
-        {{ ref('int_titulos')}}
-    GROUP BY id_conta_contabil,
-             tipo_pagamento
-
-),
-
-plano_conta AS (
-    SELECT
-        *
-    FROM 
-        {{ ref('int_plano_contas') }}
-),
-
-tabelas_agrupadas AS (
-    SELECT
-        a.tipo_pagamento,
-        a.id_conta_contabil,
-        a.total_lancamento,
-        b.codigo_conta_contabil,
-        b.conta_contabil
-    FROM lancamentos a
-    LEFT JOIN plano_conta b 
-    ON a.id_conta_contabil = b.codigo
-
+        {{ ref('int_titulos') }}
 )
 
-SELECT * FROM tabelas_agrupadas
+SELECT * FROM lancamentos ORDER BY vencimento

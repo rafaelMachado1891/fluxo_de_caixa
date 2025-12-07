@@ -26,7 +26,10 @@ SELECT
     numero_titulo,
     data_emissao,
     vencimento,
-    data_pagamento,
+    CASE
+        WHEN data_pagamento = '1753-01-01' THEN NULL
+        ELSE data_pagamento
+    END AS data_pagamento,
     valor_titulo,
     tipo_pagamento,
     instituicao,
