@@ -23,7 +23,7 @@ tabela_tratada AS (
         "ContaContabilDebito":: INTEGER AS conta_contabil_debito,
         "Tipo_C":: INTEGER AS tipo_pagameto,
         "Codigo_C":: INTEGER AS id_cliente,
-        "Instituicao":: INTEGER AS intituicao
+        "Instituicao":: INTEGER AS instituicao
     FROM 
         lancamentos
 )
