@@ -3,7 +3,7 @@ from utils import CarregarCsv, Conexao_com_Banco
 conexao = Conexao_com_Banco()
 engine = conexao.criar_engine()
 
-titulos = ('C:/Users/rafad/Documents/Repositorios_Git/fluxo_de_caixa/src/data/consulta_titulos.csv')
+titulos = ('C:/Users/PCP/Documents/repositorios_git/projeto_fluxo_caixa/fluxo_de_caixa/src/data/consulta_titulos.csv')
 
 carga_fluxo = CarregarCsv(titulos)
 
@@ -17,7 +17,7 @@ carga_fluxo.carregar_no_banco(
 )
 
 
-plano_contas = ('C:/Users/rafad/Documents/Repositorios_Git/fluxo_de_caixa/src/data/plano_contas.csv')
+plano_contas = ('C:/Users/PCP/Documents/repositorios_git/projeto_fluxo_caixa/fluxo_de_caixa/src/data/plano_contas.csv')
 
 carga_plano_contas = CarregarCsv(plano_contas)
 
