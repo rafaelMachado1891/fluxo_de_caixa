@@ -3,64 +3,93 @@ version: 2
 models:
   - name: int_titulos
     description: "tabela dos lancamentos dos titulos"
-    columns: 
-         - name: numero_titulo
-           description: 'ID do titulo de pagamento cadastrado no sistema de origem'
-           data_type: TEXT
-           tests:
-            - not_null  # Garante que não há valores nulos          
-         - name: data_emissao
-           description: 'data de cadastro no sistema de origem'
-           data_type: DATE
-           tests:
-            - not_null
-         - name: vencimento
-           description: 'data de vencimento do titulo'
-           data_type: DATE
-           tests:
-            - not_null
-         - name: valor_titulo
-           description: 'valor monetario do titulo'
-           data_type: DECIMAL
-           tests:
-            - not_null
-            - valores_positivos
-         - name: tipo_pagamento
-           description: 'indica se o registro é uma entrada ou uma saida'
-           data_type: TEXT
-           tests:
-            - not_null
-         - name: instituicao
-           description: 'instituicao de pagamento'
-         - name: situacao_titulo
-           description: 'indica a situacao do titulo (pago/pendente/parcial)'
-           data_type: TEXT
-           tests:
-            - not_null
-         - name: id_conta_contabil
-           description: 'identificador unico da conta contabil'
-           data_type: INTEGER
-           tests:
-            - not_null
-            - relationships:
+    columns:
+      - name: numero_titulo
+        description: 'ID do titulo de pagamento cadastrado no sistema de origem'
+        data_type: TEXT
+        tests:
+          - not_null  
+
+      - name: data_emissao
+        description: 'data de cadastro no sistema de origem'
+        data_type: DATE
+        tests:
+          - not_null
+
+      - name: vencimento
+        description: 'data de vencimento do titulo'
+        data_type: DATE
+        tests:
+          - not_null
+
+      - name: valor_titulo
+        description: 'valor monetario do titulo'
+        data_type: DECIMAL
+        tests:
+          - not_null
+          - valores_positivos
+
+      - name: tipo_pagamento
+        description: 'indica se o registro é uma entrada ou uma saida'
+        data_type: TEXT
+        tests:
+          - not_null
+
+      - name: instituicao
+        description: 'instituicao de pagamento'
+        tests:
+          - not_null
+          - relationships:
+              arguments:               
+                to: ref('int_instituicoes')
+                field: instituicao
+
+      - name: situacao_titulo
+        description: 'indica a situacao do titulo (pago/pendente/parcial)'
+        data_type: TEXT
+        tests:
+          - not_null
+
+      - name: id_conta_contabil
+        description: 'identificador unico da conta contabil'
+        data_type: INTEGER
+        tests:
+          - not_null
+          - relationships:
+              arguments:
                 to: ref('int_plano_contas')
-                field: codigo
-         - name: id_cliente
-           description: 'identificar unico do cliente'
-           data_type: INTEGER
-           tests:
-            - not_null
+                field: id_conta_contabil
+
+      - name: id_cliente
+        description: 'identificar unico do cliente'
+        data_type: INTEGER
+        tests:
+          - not_null
+
   - name: int_plano_contas
     description: "tabela que contem o plano de contas"
     columns:
-         - name: id_conta_contabil
-           description: 'identificador unico da conta contabil'
-           data_type: INTEGER
-           tests:
-            - not_null
-         - name: conta_contabil
-           description: "hierarquia da conta contabil"
-           data_type: TEXT
-         - name: descricao_conta_contabil
-           description: "descricao da conta contabil"
-           data_type: TEXT
+      - name: id_conta_contabil
+        description: 'identificador unico da conta contabil'
+        data_type: INTEGER
+        tests:
+          - not_null
+
+      - name: conta_contabil
+        description: "hierarquia da conta contabil"
+        data_type: TEXT
+
+      - name: descricao_conta_contabil
+        description: "descricao da conta contabil"
+        data_type: TEXT
+
+  - name: int_instituicoes
+    description: 'tabela que contem as instituicoes de pagamento'
+    columns:
+      - name: id_banco
+        description: 'identificador unico da instituicao'
+        tests:
+          - not_null
+      
+      - name: razao_social
+        description: 'razao social da instituicao'

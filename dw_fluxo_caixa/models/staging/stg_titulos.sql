@@ -14,7 +14,7 @@ tbl_titulos_transformada AS (
         CASE WHEN
             tipo_credor = 2 OR tipo_credor = 3 THEN 'S'
             ELSE 'E' END:: text AS tipo_pagamento,
-        instituicao:: TEXT AS instituicao,
+        instituicao:: INTEGER AS instituicao,
         situacao_titulo:: INTEGER AS situacao_titulo,
         codigo_credito:: INTEGER AS conta_contabil_credito,
         codigo_debito:: INTEGER AS conta_contabil_debito,
@@ -32,7 +32,10 @@ SELECT
     END AS data_pagamento,
     valor_titulo,
     tipo_pagamento,
-    instituicao,
+    CASE
+        WHEN instituicao = '0' THEN 2
+        ELSE instituicao
+    END AS instituicao,
     situacao_titulo,
     COALESCE(conta_contabil_credito,0) AS conta_contabil_credito,
     COALESCE(conta_contabil_debito,0) AS conta_contabil_debito,

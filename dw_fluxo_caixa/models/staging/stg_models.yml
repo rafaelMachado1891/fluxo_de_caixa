@@ -60,3 +60,12 @@ models:
          - name: data_inclusao
            description: "data de inclusao no sistema de origem"
            data_type: DATE
+  - name: stg_instituicoes
+    description: 'tabela das instituicoes financeiras'
+    columns:
+         - name: id_banco
+           description: "identificador unico do cadastro de instituicoes"
+           data_type: INTEGER
+         - name: razao_social
+           description: "nome da instituicoes de pagamento"
+           data_type: TEXT

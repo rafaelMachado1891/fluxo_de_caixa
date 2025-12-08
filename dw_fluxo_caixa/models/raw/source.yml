@@ -80,3 +80,46 @@ sources:
           - name: DataInclusao
             description: "data de inclusao do cadastro no sistema"
             data_type: DATE
+      - name: tbl_instituicoes
+        description: 'tabela que contem as instituicoes de pagamento'
+        columns:
+          - name: codigo
+            description: "identificador unico do cadastro de instituicoes de pagamento"
+            data_type: INTEGER
+            tests:
+             - not_null
+          - name: razao
+            description: "razao social da instituicoes de pagamento"
+            data_type: TEXT
+            tests: 
+             - not_null
+
+      - name: tbl_lancamentos_fluxo
+        description: 'tabela que representa o fluxo de caixa criado no sistema de origem'
+        columns:
+          - name: Numtitulo
+            description: 'numero do titulo'
+
+          - name: tipo
+            description: 'tipo de lancamento (debito/credito)'
+
+          - name: DataReceb
+            description: 'data de recebimento do lancamento'
+          
+          - name: valor
+            description: 'valor do lancamento'
+
+          - name: ContaContabil 
+            description: 'id da conta contabil quando credito'
+          
+          - name: ContaContabilDebito 
+            description: 'id da conta contabil quando debito'
+
+          - name: Tipo_C
+            description: 'tipo de credor do lancamento (entrada/Saida/conhecimento)'
+
+          - name: Codigo_C 
+            description: 'identificador do cliente'
+
+          - name: Instituicao
+            description: 'identificador da instituicao'
