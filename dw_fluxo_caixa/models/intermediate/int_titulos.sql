@@ -15,9 +15,14 @@ tbl_titulos_transformada AS (
         instituicao,
         CASE situacao_titulo
             WHEN 1 THEN 'PENDENTE'
+            WHEN 2 THEN 'PARCIALMENTO_PAGO'
             WHEN 3 THEN 'PAGO'
-            WHEN 4 THEN 'PARCIALMENTE_PAGO'
-            WHEN 5 THEN 'CANCELADO'
+            WHEN 4 THEN 'PARCIALMENTE_PENDENTE'
+            WHEN 5 THEN 'DEVOLVIDO_PARCIAL'
+            WHEN 6 THEN 'CANCELADO'
+            WHEN 7 THEN 'PENDENTE_NA_DATA'
+            WHEN 8 THEN 'PARCIAL_PAGO'
+            WHEN 9 THEN 'REVERSAO'
             ELSE 'OUTRO'
         END:: TEXT AS situacao_titulo,
         CASE WHEN
