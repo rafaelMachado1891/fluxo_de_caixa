@@ -1,8 +1,9 @@
 WITH lancamentos AS (
     SELECT 
         "NumTitulo",
+        "Serie",
         "tipo",
-        "DataReceb",
+        "datareceb",
         "valor",
         "ContaContabil",
         "ContaContabilDebito",
@@ -16,12 +17,12 @@ WITH lancamentos AS (
 tabela_tratada AS (
     SELECT
         "NumTitulo":: TEXT AS numero_titulo,
+        "Serie":: TEXT AS serie,
         "tipo":: TEXT AS tipo_pagamento,
-        "DataReceb":: DATE AS data_recebimento,
+        "datareceb":: DATE AS data_recebimento,
         REPLACE("valor", ',', '.'):: DECIMAL AS valor,
         "ContaContabil":: INTEGER AS conta_contabil_credito,
         "ContaContabilDebito":: INTEGER AS conta_contabil_debito,
-        "Tipo_C":: INTEGER AS tipo_pagameto,
         "Codigo_C":: INTEGER AS id_cliente,
         "Instituicao":: INTEGER AS instituicao
     FROM 

@@ -3,7 +3,7 @@ from utils import CarregarCsv, Conexao_com_Banco
 conexao = Conexao_com_Banco()
 engine = conexao.criar_engine()
 
-titulos = ('C:/Users/PCP/Documents/repositorios_git/projeto_fluxo_caixa/fluxo_de_caixa/src/data/consulta_titulos.csv')
+titulos = ('C:/Users/rafad/Documents/Repositorios_Git/fluxo_de_caixa/src/data/consulta_titulos.csv')
 
 carga_fluxo = CarregarCsv(titulos)
 
@@ -17,7 +17,7 @@ carga_fluxo.carregar_no_banco(
 )
 
 
-plano_contas = ('C:/Users/PCP/Documents/repositorios_git/projeto_fluxo_caixa/fluxo_de_caixa/src/data/plano_contas.csv')
+plano_contas = ('C:/Users/rafad/Documents/Repositorios_Git/fluxo_de_caixa/src/data/plano_contas.csv')
 
 carga_plano_contas = CarregarCsv(plano_contas)
 
@@ -56,6 +56,30 @@ carga_lancamentos_fluxo.carregar_no_banco(
     index=False
 )
 
+clientes = ('C:/Users/rafad/Documents/Repositorios_Git/fluxo_de_caixa/src/data/clientes.csv')
+
+carga_clientes = CarregarCsv(clientes)
+carga_clientes.carregar_csv()
+carga_clientes.carregar_no_banco(
+    tabela='tbl_clientes',
+    con=engine,
+    metodo='replace',
+    index=False
+)
+
+saldo_inicial = ('C:/Users/rafad/Documents/Repositorios_Git/fluxo_de_caixa/src/data/saldo_inicial.csv')
+
+carga_saldo = CarregarCsv(saldo_inicial)
+
+carga_saldo.carregar_csv()
+
+carga_saldo.carregar_no_banco(
+    tabela='tbl_saldo_inicial',
+    con=engine,
+    metodo='replace',
+    index=False
+)
+
 print("✅ Dados carregados com sucesso na tabela tbl_fluxo")
 
 print("✅ Dados carregados com sucesso na tabela tbl_plano_contas")
@@ -63,3 +87,7 @@ print("✅ Dados carregados com sucesso na tabela tbl_plano_contas")
 print("✅ Dados carregados com sucesso na tabela tbl_instituicoes")
 
 print("✅ Dados carregados com sucesso na tabela tbl_lancamentos_fluxo")
+
+print("✅ Dados carregados com sucesso na tabela tbl_clientes")
+
+print("✅ Dados carregados com sucesso na tabela tbl_saldo_inicial")

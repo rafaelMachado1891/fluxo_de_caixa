@@ -7,6 +7,7 @@ WITH titulos AS (
 tbl_titulos_transformada AS (
     SELECT 
         numero_titulo:: TEXT AS numero_titulo,
+        serie:: TEXT AS serie,
         data_emissao:: DATE AS data_emissao,
         vencimento:: DATE AS vencimento,
         data_pagamento:: DATE as data_pagamento,
@@ -24,6 +25,7 @@ tbl_titulos_transformada AS (
 
 SELECT 
     numero_titulo,
+    serie,
     data_emissao,
     vencimento,
     CASE
