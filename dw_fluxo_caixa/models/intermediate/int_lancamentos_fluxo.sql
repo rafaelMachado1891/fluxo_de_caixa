@@ -1,6 +1,7 @@
 WITH int_lancamentos AS (
     SELECT
         numero_titulo,
+        serie,
         tipo_pagamento,
         data_recebimento,
         valor,
@@ -15,6 +16,7 @@ WITH int_lancamentos AS (
 tabela_tratada AS (
     SELECT
         numero_titulo,
+        COALESCE(serie, 'S/N') AS serie,
         CASE
             WHEN tipo_pagamento = 'D' THEN 'S'
             ELSE 'E'
@@ -31,4 +33,18 @@ tabela_tratada AS (
         int_lancamentos
 )
 
-SELECT * FROM tabela_tratada
+SELECT 
+    numero_titulo,
+    serie,
+    data_recebimento AS data_emissao,
+    data_recebimento  AS vencimento,
+    data_recebimento AS data_pagamento,
+    valor AS valor_titulo,
+    tipo_pagamento,
+    instituicao,
+    'PAGO':: TEXT AS situcao_titulo,
+    CASE 
+        WHEN id_conta_contabil = 0 THEN 9999
+        ELSE id_conta_contabil END AS id_conta_contabil,
+    id_cliente    
+FROM tabela_tratada

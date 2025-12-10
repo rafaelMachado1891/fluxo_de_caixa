@@ -7,6 +7,7 @@ WITH int_titulos AS (
 tbl_titulos_transformada AS (
     SELECT 
         numero_titulo,
+        COALESCE(serie, 'S/N') AS serie,
         data_emissao,
         vencimento,
         data_pagamento,
@@ -34,6 +35,7 @@ tbl_titulos_transformada AS (
 
 SELECT 
     numero_titulo,
+    serie,
     data_emissao,
     vencimento,
     data_pagamento,
