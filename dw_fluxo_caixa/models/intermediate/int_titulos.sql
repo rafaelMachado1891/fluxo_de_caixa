@@ -8,6 +8,7 @@ tbl_titulos_transformada AS (
     SELECT 
         numero_titulo,
         COALESCE(serie, 'S/N') AS serie,
+        numero_da_parcela,
         data_emissao,
         vencimento,
         data_pagamento,
@@ -36,6 +37,7 @@ tbl_titulos_transformada AS (
 SELECT 
     numero_titulo,
     serie,
+    numero_da_parcela,
     data_emissao,
     vencimento,
     data_pagamento,

@@ -2,6 +2,7 @@ WITH lancamentos AS (
     SELECT 
         "NumTitulo",
         "Serie",
+        "N",
         "tipo",
         "datareceb",
         "valor",
@@ -18,6 +19,7 @@ tabela_tratada AS (
     SELECT
         "NumTitulo":: TEXT AS numero_titulo,
         "Serie":: TEXT AS serie,
+        "N":: INTEGER AS numero_da_parcela,
         "tipo":: TEXT AS tipo_pagamento,
         "datareceb":: DATE AS data_recebimento,
         REPLACE("valor", ',', '.'):: DECIMAL AS valor,

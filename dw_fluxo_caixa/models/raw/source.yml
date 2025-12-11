@@ -23,6 +23,10 @@ sources:
          - name: serie
            description: 'numero da parcela do documento'
            data_type: INTEGER
+
+         - name: n 
+           description: 'coluna que representa o numero da parcela de um titulo'
+           data_type: INTEGER
            
          - name: id_cliente
            description: 'identificar unico do cliente'

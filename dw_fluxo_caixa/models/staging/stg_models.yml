@@ -14,6 +14,12 @@ models:
            description: 'numero de serie do documento'
            data_type: TEXT
 
+         - name: numero_da_parcela
+           description: 'coluna que representa o numero da parcela de um titulo'
+           data_type: INTEGER
+           tests:
+            - not_null
+
          - name: data_emissao
            description: 'data de cadastro no sistema de origem'
            data_type: DATE
@@ -100,6 +106,10 @@ models:
          - name: serie
            description: 'numero de serie do documento'
            data_type: TEXT
+
+         - name: numero_da_parcela
+           description: 'coluna que representa o numero da parcela lancada no fluxo'
+           data_type: INTEGER
 
          - name: tipo_pagamento
            description: 'coluna que indica se o lancamento e de entrada ou saida'

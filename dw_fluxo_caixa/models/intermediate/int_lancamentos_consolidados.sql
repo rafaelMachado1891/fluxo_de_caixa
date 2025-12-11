@@ -8,6 +8,7 @@ WITH lancamentos AS (
         {{ ref('int_titulos') }} b 
     ON a.numero_titulo = b.numero_titulo AND
        a.numero_titulo <> '0' AND
+       a.numero_da_parcela = b.numero_da_parcela AND
        a.serie = b.serie AND
        a.id_cliente = b.id_cliente
     WHERE b.numero_titulo IS NULL
@@ -28,5 +29,26 @@ consolidado AS (
     SELECT * FROM titulos
 )
 
-SELECT * FROM consolidado
+SELECT 
+    numero_titulo,
+    serie,
+    numero_da_parcela,
+    data_emissao,
+    vencimento,
+    data_pagamento,
+    valor_titulo,
+    tipo_pagamento,
+    instituicao,
+    situacao_titulo,
+    id_conta_contabil,
+    id_cliente,
+    CASE
+        WHEN titulo_vinculado IS NULL THEN 'LANCAMENTO_AVULSO'
+        ELSE 'TITULO_VINCULADO' END AS tipo_lancamento,
+    CASE
+        WHEN data_pagamento IS NULL THEN 'PROJETADO'
+        ELSE 'REALIZADO' END AS tipo_fluxo
+
+FROM consolidado
+
 
