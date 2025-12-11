@@ -57,6 +57,16 @@ class CarregarCsv():
             index=index
         )
 
+    def processar(self, tabela, con, metodo: str = "replace", index: bool = False):
+        
+        self.carregar_csv()
+        self.carregar_no_banco(
+            tabela=tabela,
+            con=con,
+            metodo=metodo,
+            index=index
+        )
+
 
 class Conexao_com_Banco():
     def __init__(self):
