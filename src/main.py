@@ -8,7 +8,10 @@ diretorio = os.path.dirname(os.path.abspath(__file__))
 
 arquivos = {
     "tbl_fluxo": "consulta_titulos.csv",
-    "tbl_plano_contas": "plano_contas.csv"
+    "tbl_plano_contas": "plano_contas.csv",
+    "tbl_lancamentos_fluxo": "fluxo_caixa.csv",
+    "tbl_intituicoes": "instituicoes.csv",
+    "tbl_saldo_inicial":"saldo_inicial.csv"
 }
 
 for tabela, nome_arquivo in arquivos.items():

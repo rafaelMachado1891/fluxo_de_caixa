@@ -1,3 +1,10 @@
+{{ config(
+    materialized='incremental',
+    unique_key=['numero_titulo', 'serie', 'numero_da_parcela', 'id_cliente']
+) }}
+
+
+
 WITH int_titulos AS (
     SELECT
         *
@@ -30,7 +37,8 @@ tbl_titulos_transformada AS (
         CASE WHEN
             conta_contabil_credito = 0 THEN conta_contabil_debito
             ELSE conta_contabil_credito END:: INTEGER AS id_conta_contabil,
-        id_cliente
+        id_cliente,
+        data_lancamento
     FROM int_titulos
 )
 
@@ -50,3 +58,9 @@ SELECT
         ELSE id_conta_contabil END AS id_conta_contabil,
     id_cliente
 FROM tbl_titulos_transformada
+
+
+
+{% if is_incremental() %}
+    where data_lancamento> (select max(data_lancamento) from {{ this }})
+{% endif %}

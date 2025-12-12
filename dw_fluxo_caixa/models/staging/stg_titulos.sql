@@ -20,7 +20,8 @@ tbl_titulos_transformada AS (
         situacao_titulo:: INTEGER AS situacao_titulo,
         codigo_credito:: INTEGER AS conta_contabil_credito,
         codigo_debito:: INTEGER AS conta_contabil_debito,
-        id_cliente:: INTEGER AS id_cliente
+        id_cliente:: INTEGER AS id_cliente,
+        TO_DATE(SUBSTRING(data_hora_lancamento FROM '^[A-Za-z]{3} [0-9]{1,2} [0-9]{4}'), 'Mon DD YYYY') AS data_hora_lancamento
     FROM titulos
 )
 
@@ -43,5 +44,6 @@ SELECT
     situacao_titulo,
     COALESCE(conta_contabil_credito,0) AS conta_contabil_credito,
     COALESCE(conta_contabil_debito,0) AS conta_contabil_debito,
-    id_cliente
+    id_cliente,
+    data_hora_lancamento AS data_lancamento
 FROM tbl_titulos_transformada

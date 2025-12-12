@@ -47,8 +47,8 @@ models:
 
          - name: instituicao
            description: 'instituicao de pagamento'
-         - name: situacao_titulo
 
+         - name: situacao_titulo
            description: 'indica a situacao do titulo (pago/pendente/parcial)'
            data_type: INTEGER
            tests:
@@ -65,6 +65,10 @@ models:
          - name: id_cliente
            description: 'identificar unico do cliente'
            data_type: INTEGER
+
+         - name: data_lancamento
+           description: 'data e hora do lancamento do registro criado pelo sistema de origem'
+           data_type: DATE
 
   - name: stg_plano_contas
     description: "tabela que contem o plano de contas"
@@ -141,6 +145,10 @@ models:
          - name: instituicao
            description: 'identificador da instituicao'
            data_type: INTEGER
+
+         - name: data_lancamento
+           description: 'data de lancamento do registro no sistema de origem, registro igual a coluna data de recebimento'
+           data_type: DATE
 
   - name: stg_clientes
     description: 'tabela de clintes'

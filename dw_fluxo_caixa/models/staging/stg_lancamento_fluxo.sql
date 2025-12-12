@@ -26,7 +26,8 @@ tabela_tratada AS (
         "ContaContabil":: INTEGER AS conta_contabil_credito,
         "ContaContabilDebito":: INTEGER AS conta_contabil_debito,
         "Codigo_C":: INTEGER AS id_cliente,
-        "Instituicao":: INTEGER AS instituicao
+        "Instituicao":: INTEGER AS instituicao,
+        "datareceb":: DATE AS data_lancamento
     FROM 
         lancamentos
 )

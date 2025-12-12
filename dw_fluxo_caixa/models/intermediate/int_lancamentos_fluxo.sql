@@ -1,3 +1,9 @@
+{{ config(
+    materialized='incremental',
+    unique_key=['numero_titulo', 'serie', 'numero_da_parcela', 'id_cliente']
+) }}
+
+
 WITH int_lancamentos AS (
     SELECT
         numero_titulo,
@@ -9,7 +15,8 @@ WITH int_lancamentos AS (
         conta_contabil_credito,
         conta_contabil_debito,
         id_cliente,
-        instituicao
+        instituicao,
+        data_lancamento
     FROM
         {{ ref('stg_lancamento_fluxo') }}
 ),
@@ -51,3 +58,7 @@ SELECT
         ELSE id_conta_contabil END AS id_conta_contabil,
     id_cliente    
 FROM tabela_tratada
+
+{% if is_incremental() %}
+    where data_lancamento> (select max(data_lancamento) from {{ this }})
+{% endif %}

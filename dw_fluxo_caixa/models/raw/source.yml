@@ -86,7 +86,7 @@ sources:
            description: 'descricao da conta contabil'
 
          - name: data_hora_lancamento
-           description: 'data e hora de registro do lancamento'
+           description: 'data e hora de registro do lancamento no sistema de origem'
 
       - name: tbl_plano_contas
         description: "plano de contas do sistema ERP"
