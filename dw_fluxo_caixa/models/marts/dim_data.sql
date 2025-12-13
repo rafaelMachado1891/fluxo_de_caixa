@@ -3,7 +3,8 @@ SELECT
     date_day AS data,
     month_of_year AS mes,
     month_name_short AS nome_mes,
-    quarter_of_year AS trimestre
+    quarter_of_year AS trimestre,
+    year_number AS ano
 FROM 
     {{ ref('int_dim_date') }}
 )

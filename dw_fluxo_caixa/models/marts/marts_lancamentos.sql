@@ -5,7 +5,10 @@ WITH lancamentos AS (
         vencimento,
         data_pagamento,
         vencimento - data_emissao AS prazo,
-        valor_titulo,
+        CASE
+            WHEN tipo_pagamento = 'S' 
+                THEN valor_titulo * (-1)
+            ELSE valor_titulo END AS valor_titulo, 
         id_conta_contabil,
         tipo_pagamento,
         situacao_titulo,     
@@ -17,7 +20,7 @@ WITH lancamentos AS (
         END AS tipo_fluxo
 
     FROM 
-        {{ ref('int_titulos') }}
+        {{ ref('int_lancamentos_consolidados') }}
 )
 
 SELECT * FROM lancamentos ORDER BY vencimento
