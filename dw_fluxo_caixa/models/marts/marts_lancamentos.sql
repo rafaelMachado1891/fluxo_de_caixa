@@ -14,10 +14,7 @@ WITH lancamentos AS (
         situacao_titulo,     
         instituicao,
         id_cliente,
-        CASE 
-            WHEN data_pagamento = NULL THEN 'PROJETADO'
-            ELSE 'REALIZADO'
-        END AS tipo_fluxo
+        tipo_fluxo
 
     FROM 
         {{ ref('int_lancamentos_consolidados') }}
