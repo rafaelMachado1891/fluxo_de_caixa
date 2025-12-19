@@ -19,7 +19,7 @@ tbl_titulos_transformada AS (
             WHEN 1 THEN 'PENDENTE'
             WHEN 2 THEN 'PARCIALMENTO_PAGO'
             WHEN 3 THEN 'PAGO'
-            WHEN 4 THEN 'PARCIALMENTE_PENDENTE'
+            WHEN 4 THEN 'DEVOLVIDO'
             WHEN 5 THEN 'DEVOLVIDO_PARCIAL'
             WHEN 6 THEN 'CANCELADO'
             WHEN 7 THEN 'PENDENTE_NA_DATA'
