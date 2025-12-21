@@ -38,10 +38,7 @@ jobs:
                 schema: public
             EOF    
 
-      - name: dbt deps
-        working-directory: dw_fluxo_caixa
-        run: dbt deps --profiles-dir ~/.dbt
-
+  
       - name: dbt build
         working-directory: dw_fluxo_caixa
         run: dbt build --profiles-dir ~/.dbt

@@ -1,1 +1,1 @@
-select * from {{ ref('int_lancamentos_fluxo') }} ORDER BY numero_titulo ASC
+select * from {{ ref('int_lancamentos_fluxo') }} ORDER BY numero_titulo DESC
