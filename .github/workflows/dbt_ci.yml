@@ -36,7 +36,7 @@ jobs:
                 port: ${{ secrets.DB_PORT }}
                 dbname: ${{ secrets.DB_NAME }}
                 schema: public
-            EOF    
+          EOF    
   
       - name: dbt run
         working-directory: dw_fluxo_caixa
