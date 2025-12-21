@@ -40,8 +40,8 @@ jobs:
 
       - name: dbt deps
         working-directory: dw_fluxo_caixa
-        run: dbt deps --profile-dir ~/.dbt
+        run: dbt deps --profiles-dir ~/.dbt
 
       - name: dbt build
         working-directory: dw_fluxo_caixa
-        run: dbt build --profile-dir ~/.dbt
+        run: dbt build --profiles-dir ~/.dbt
