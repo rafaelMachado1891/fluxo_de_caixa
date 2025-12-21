@@ -24,19 +24,19 @@ jobs:
         run: |
           mkdir -p ~/.dbt
           cat > ~/.dbt/profiles.yml << EOF
-          dw_fluxo_caixa:
-            target: dev
-            outputs:
-              dev:
-                type: postgres
-                threads: 1
-                host: ${{ secrets.DB_HOST }}
-                user: ${{ secrets.DB_USERS }}
-                password: ${{ secrets.DB_PASS }}
-                port: ${{ secrets.DB_PORT }}
-                dbname: ${{ secrets.DB_NAME }}
-                schema: public
-          EOF    
+      dw_fluxo_caixa:
+        target: dev
+        outputs:
+          dev:
+            type: postgres
+            threads: 1
+            host: ${{ secrets.DB_HOST }}
+            user: ${{ secrets.DB_USERS }}
+            password: ${{ secrets.DB_PASS }}
+            port: ${{ secrets.DB_PORT }}
+            dbname: ${{ secrets.DB_NAME }}
+            schema: public
+      EOF    
   
       - name: dbt run
         working-directory: dw_fluxo_caixa
