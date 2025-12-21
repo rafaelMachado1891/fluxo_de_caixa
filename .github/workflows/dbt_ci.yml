@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  dbt_build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.4'
+
+      - name: install dbt
+        run: pip install dbt-core==1.9.4 dbt-postgres==1.9.0
+
+      - name: Configure dbt profile
+        run:
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml << EOF
+          dw_fluxo_caixa:
+            target: dev
+            outputs:
+              dev:
+                type: postgres
+                threads: 1
+                host: ${{ secrets.DB_HOST }}
+                user: ${{ secrets.DB_USERS }}
+                password: ${{ secrets.DB_PASS }}
+                port: ${{ secrets.DB_PORT }}
+                dbname: ${{ secrets.DB_NAME }}
+                schema: public
+            EOF    
+
+      - name: dbt deps
+        working-directory: dw_fluxo_caixa
+        run: dbt deps --profile-dir ~/.dbt
+
+      - name: dbt build
+        working-directory: dw_fluxo_caixa
+        run: dbt build --profile-dir ~/.dbt

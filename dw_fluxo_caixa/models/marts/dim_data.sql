@@ -3,6 +3,7 @@ SELECT
     date_day AS data,
     month_of_year AS mes,
     month_name_short AS nome_mes,
+    day_of_month AS dia,
     quarter_of_year AS trimestre,
     year_number AS ano
 FROM 
