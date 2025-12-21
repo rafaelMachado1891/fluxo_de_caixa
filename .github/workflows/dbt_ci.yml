@@ -37,8 +37,7 @@ jobs:
                 dbname: ${{ secrets.DB_NAME }}
                 schema: public
             EOF    
-
   
-      - name: dbt build
+      - name: dbt run
         working-directory: dw_fluxo_caixa
-        run: dbt build --profiles-dir ~/.dbt
+        run: dbt run --profiles-dir ~/.dbt
