@@ -56,7 +56,7 @@ sources:
 
          - name: valor_titulo
            description: 'valor monetario do titulo'
-           data_type: DECIMAL
+           data_type: TEXT
            tests:
             - not_null
 
