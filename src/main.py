@@ -1,6 +1,7 @@
 from utils import CarregarCsv, Conexao_com_Banco
 import os
 
+
 conexao = Conexao_com_Banco()
 engine = conexao.criar_engine()
 

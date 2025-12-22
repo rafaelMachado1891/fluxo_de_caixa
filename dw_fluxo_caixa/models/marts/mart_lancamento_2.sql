@@ -1,0 +1,1 @@
+select * from {{ ref('int_lancamentos_fluxo') }} ORDER BY numero_titulo DESC
