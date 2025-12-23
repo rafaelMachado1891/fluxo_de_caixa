@@ -1,8 +1,9 @@
-from utils import CarregarCsv, Conexao_com_Banco
+from src.utils import CarregarCsv, Conexao_com_Banco
 import os
 
+
 def rodar_pipeline():
-    conexao = Conexao_com_Banco()
+    conexao = Conexao_com_Banco(conn_id="postgres_fluxo")
     engine = conexao.criar_engine()
 
     diretorio = os.path.dirname(os.path.abspath(__file__))
@@ -17,10 +18,14 @@ def rodar_pipeline():
 
     for tabela, nome_arquivo in arquivos.items():
         caminho = os.path.join(diretorio, "data", nome_arquivo)
-        carga = CarregarCsv(caminho)
-        carga.processar(
-            tabela=tabela,
-            con=engine,
-            metodo="replace",
-            index=False
-        )
+
+    carga = CarregarCsv(caminho)
+    carga.carregar_csv()
+    carga.carregar_no_banco(
+        tabela=tabela,
+        con=engine,
+        metodo="replace",
+        index=False
+    )
+
+    print(f"Tabela {tabela} carregada com sucesso")

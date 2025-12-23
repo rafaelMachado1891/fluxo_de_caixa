@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  airflow-webserver:
+    image: astrocrpublic.azurecr.io/runtime:3.1-9
+    container_name: airflow_webserver
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    networks:
+      - postgres_fluxo_network
+
+  airflow-scheduler:
+    image: astrocrpublic.azurecr.io/runtime:3.1-9
+    container_name: airflow_scheduler
+    env_file:
+      - .env
+    networks:
+      - postgres_fluxo_network
+
+networks:
+  postgres_fluxo_network:
+    external: true

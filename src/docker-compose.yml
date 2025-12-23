@@ -36,7 +36,7 @@ services:
 
 networks:
     postgres_fluxo_network:
-      driver: bridge
+       external: true
 
 volumes:
     postgres_fluxo_data:
