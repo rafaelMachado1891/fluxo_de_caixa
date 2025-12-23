@@ -1,8 +1,9 @@
-from utils import CarregarCsv, Conexao_com_Banco
+from src.utils import CarregarCsv, Conexao_com_Banco
 import os
 
+
 def rodar_pipeline():
-    conexao = Conexao_com_Banco()
+    conexao = Conexao_com_Banco(conn_id="postgres_fluxo")
     engine = conexao.criar_engine()
 
     diretorio = os.path.dirname(os.path.abspath(__file__))

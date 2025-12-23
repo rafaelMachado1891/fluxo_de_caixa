@@ -57,3 +57,4 @@ tzdata==2025.2
 urllib3==2.5.0
 zipp==3.23.0
 astronomer-cosmos==1.10.1
+sqlalchemy==1.4.54
