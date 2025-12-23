@@ -24,3 +24,7 @@ def rodar_pipeline():
             metodo="replace",
             index=False
         )
+        
+        print(f"dados carregados com sucesso na tabela {tabela}")
+        
+        
