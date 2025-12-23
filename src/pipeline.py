@@ -18,14 +18,14 @@ def rodar_pipeline():
 
     for tabela, nome_arquivo in arquivos.items():
         caminho = os.path.join(diretorio, "data", nome_arquivo)
-
-    carga = CarregarCsv(caminho)
-    carga.carregar_csv()
-    carga.carregar_no_banco(
-        tabela=tabela,
-        con=engine,
-        metodo="replace",
-        index=False
-    )
-
-    print(f"Tabela {tabela} carregada com sucesso")
+        carga = CarregarCsv(caminho)
+        carga.processar(
+            tabela=tabela,
+            con=engine,
+            metodo="replace",
+            index=False
+        )
+        
+        print(f"dados carregados com sucesso na tabela {tabela}")
+        
+        
