@@ -1,17 +1,17 @@
 services:
-  postgres:
+  postgres_fluxo:
     image: postgres:17
     container_name: fluxo_de_caixa
     environment:
-      POSTGRES_USER: ${USER}
-      POSTGRES_PASSWORD: ${PASSWORD}  
-      POSTGRES_DB: ${DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}  
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5440:5432"
     volumes:
       - postgres_fluxo_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U ${USER} -d {POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
