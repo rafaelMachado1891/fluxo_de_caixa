@@ -18,15 +18,23 @@ def dag_executar_pipeline():
     def task_executar_pipeline():
         executar_pipeline()
 
-    task_dbt_run = BashOperator(
-        task_id = "dbt_run",
-        bash_command = """
-        cd /usr/local/airflow/dw_fluxo_caixa 
+    task_dbt_seed = BashOperator(
+        task_id="dbt_seed",
+        bash_command="""
+        cd /usr/local/airflow/dw_fluxo_caixa &&
+        dbt seed
         """
     )
 
+    task_dbt_run = BashOperator(
+        task_id="dbt_run",
+        bash_command="""
+        cd /usr/local/airflow/dw_fluxo_caixa &&
+        dbt run
+        """
+    )
 
-    task_executar_pipeline() >> task_dbt_run
+    task_executar_pipeline() >> task_dbt_seed >> task_dbt_run
     
 
 dag_executar_pipeline()

@@ -14,6 +14,7 @@ def rodar_pipeline():
         "tbl_lancamentos_fluxo": "fluxo_caixa.csv",
         "tbl_instituicoes": "instituicoes.csv",
         "tbl_saldo_inicial": "saldo_inicial.csv",
+        "tbl_clientes": "clientes.csv",
     }
 
     for tabela, nome_arquivo in arquivos.items():
