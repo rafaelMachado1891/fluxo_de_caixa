@@ -1,3 +1,4 @@
+
 WITH lancamentos AS (
     SELECT 
         "NumTitulo",
@@ -11,25 +12,23 @@ WITH lancamentos AS (
         "Tipo_C",
         "Codigo_C",
         "Instituicao"
-    FROM 
-        {{ source('fluxo_db', 'tbl_lancamentos_fluxo') }}
+    FROM {{ source('fluxo_db', 'tbl_lancamentos_fluxo') }} LIMIT 10
 ),
 
 tabela_tratada AS (
     SELECT
-        "NumTitulo":: TEXT AS numero_titulo,
-        "Serie":: TEXT AS serie,
-        "N":: INTEGER AS numero_da_parcela,
-        "tipo":: TEXT AS tipo_pagamento,
-        "datareceb":: DATE AS data_recebimento,
-        "valor":: DECIMAL AS valor,
-        "ContaContabil":: INTEGER AS conta_contabil_credito,
-        "ContaContabilDebito":: INTEGER AS conta_contabil_debito,
-        "Codigo_C":: INTEGER AS id_cliente,
-        "Instituicao":: INTEGER AS instituicao,
-        "datareceb":: DATE AS data_lancamento
-    FROM 
-        lancamentos
+        "NumTitulo"::TEXT AS numero_titulo,
+        "Serie"::TEXT AS serie,
+        "N"::INTEGER AS numero_da_parcela,
+        "tipo"::TEXT AS tipo_pagamento,
+        "datareceb"::DATE AS data_recebimento,
+        REPLACE(REPLACE("valor"::TEXT, '.', ''), ',', '.')::DECIMAL AS valor,
+        "ContaContabil"::INTEGER AS conta_contabil_credito,
+        "ContaContabilDebito"::INTEGER AS conta_contabil_debito,
+        "Codigo_C"::INTEGER AS id_cliente,
+        "Instituicao"::INTEGER AS instituicao,
+        "datareceb"::DATE AS data_lancamento
+    FROM lancamentos
 )
 
 SELECT * FROM tabela_tratada
