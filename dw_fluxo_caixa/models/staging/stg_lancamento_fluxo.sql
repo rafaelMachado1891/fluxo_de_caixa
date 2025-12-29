@@ -12,7 +12,7 @@ WITH lancamentos AS (
         "Tipo_C",
         "Codigo_C",
         "Instituicao"
-    FROM {{ source('fluxo_db', 'tbl_lancamentos_fluxo') }} LIMIT 10
+    FROM {{ source('fluxo_db', 'tbl_lancamentos_fluxo') }}
 ),
 
 tabela_tratada AS (
