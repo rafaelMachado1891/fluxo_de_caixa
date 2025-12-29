@@ -5,7 +5,7 @@ WITH lancamentos AS (
         "Serie",
         "N",
         "tipo",
-        "datareceb",
+        "DataReceb",
         "valor",
         "ContaContabil",
         "ContaContabilDebito",
@@ -22,12 +22,12 @@ tabela_tratada AS (
         "N"::INTEGER AS numero_da_parcela,
         "tipo"::TEXT AS tipo_pagamento,
         "datareceb"::DATE AS data_recebimento,
-        REPLACE(REPLACE("valor"::TEXT, '.', ''), ',', '.')::DECIMAL AS valor,
+        "valor"::DECIMAL AS valor,
         "ContaContabil"::INTEGER AS conta_contabil_credito,
         "ContaContabilDebito"::INTEGER AS conta_contabil_debito,
         "Codigo_C"::INTEGER AS id_cliente,
         "Instituicao"::INTEGER AS instituicao,
-        "datareceb"::DATE AS data_lancamento
+        "DataReceb"::DATE AS data_lancamento
     FROM lancamentos
 )
 
