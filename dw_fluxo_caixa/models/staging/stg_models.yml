@@ -128,7 +128,8 @@ models:
            data_type: DECIMAL
            tests:
             - not_null
-            - valores_positivos
+            - valores_positivos: 
+                column_name: valor_titulo
         
          - name: conta_contabil_credito
            description: 'identificador da conta contabil'
@@ -174,6 +175,6 @@ models:
             description: 'saldo inicial de caixa'
             data_type: DECIMAL
             tests:
-             - valores_positivos
-
+             - valores_positivos: 
+                column_name: valor_titulo
           

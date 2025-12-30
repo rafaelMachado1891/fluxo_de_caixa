@@ -139,7 +139,7 @@ sources:
           - name: tipo
             description: 'tipo de lancamento (debito/credito)'
 
-          - name: dataReceb
+          - name: DataReceb
             description: 'data de recebimento do lancamento'
 
           - name: descricao
