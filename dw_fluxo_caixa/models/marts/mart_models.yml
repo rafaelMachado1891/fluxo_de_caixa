@@ -9,7 +9,7 @@ models:
           - not_null
       
       - name: razao_social
-        descrition: 'razão social do terceiro'
+        description: 'razão social do terceiro'
         data_type: TEXT
 
   - name: dim_data
@@ -101,7 +101,6 @@ models:
   - name: mart_lancamentos
     description: 'tabela agrupada com os lancamentos de titulos e lancamentos avulsos no fluxo de caixa do ERP de origem'
     columns:
-      columns:
       - name: numero_do_titulo
         description: 'numero do titulo vinculado ao lancamento'
         data_type: TEXT
@@ -130,10 +129,9 @@ models:
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('dim_data')
-                field: data
-      
+              to: ref('dim_data')
+              field: data
+    
       - name: data_pagamento
         description: 'data de pagamento do titulo'
         data_type: DATE
@@ -159,8 +157,8 @@ models:
         tests:
           - not_null
           - relationships:
-            to: ref('dim_instituicoes')
-            field: id_banco
+              to: ref('dim_instituicoes')
+              field: id_banco
 
       - name: situacao_titulo
         description: 'indica a situacao do titulo (pago/pendente/parcial)'
@@ -174,8 +172,8 @@ models:
         tests:
           - not_null
           - relationships:
-            to: ref('dim_plano_contas')
-            field: codigo
+              to: ref('dim_plano_contas')
+              field: codigo
           
       - name: id_cliente
         description: 'identificador do cliente'
@@ -183,8 +181,8 @@ models:
         tests: 
           - not_null
           - relationships:
-            to: ref('dim_clientes')
-            field: id_cliente
+              to: ref('dim_clientes')
+              field: id_cliente
       
       - name: tipo_lancamento
         description: 'indica se o lancamento corresponde a um titulo ou a uma movimentacao avulsa'
