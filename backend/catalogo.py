@@ -1,8 +1,8 @@
-from metrics import saldo_operacional_mes_atual
+from metrics import saldo_operacional_mes
 
-catalago = {
+CATALOGO_METRICAS= {
     "saldo_operacional_mes": {
-        "funcao": saldo_operacional_mes_atual,
+        "func": saldo_operacional_mes,
         "descricao": "saldo operacional de um mes especifico",
         "parametro": ["ano", "mes"]
     }

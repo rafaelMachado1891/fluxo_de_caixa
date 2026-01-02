@@ -1,15 +1,24 @@
-from metrics import saldo_operacional_mes_atual
+from catalogo import CATALOGO_METRICAS
+from planner import interpretar_pergunta
 
 def responder(pergunta: str) -> str:
-    pergunta = pergunta.lower()
+    plano = interpretar_pergunta(pergunta)
 
-    if "saldo operacional" in pergunta and "mês" in pergunta:
-        valor = saldo_operacional_mes_atual()
+    metrica_nome = plano["metrica"]
 
-        valor_decimal = valor[0]
+    if metrica_nome not in CATALOGO_METRICAS:
+        return "Ainda não sei responder essa pergunta."
 
-        return (
-            f"O saldo operacional realizado no mês atual é R${valor_decimal}"
-        )
+    metrica = CATALOGO_METRICAS[metrica_nome]
+    func = metrica["func"]
 
-    return "Ainda não sei responder essa pergunta."
+    valor = func(
+        ano=plano["ano"],
+        mes=plano["mes"]
+    )
+
+    return (
+        f"O saldo operacional realizado em "
+        f"{plano['mes']:02d}/{plano['ano']} foi "
+        f"R$ {valor:,.2f}."
+    )

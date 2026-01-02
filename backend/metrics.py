@@ -3,7 +3,7 @@ from db import executar_query
 
 
 def saldo_operacional_mes(ano: int, mes: int) -> float:
-    ano_mes = f"{ano}-{mes}"
+    ano_mes = f"{ano}-{mes:02d}"
 
     sql = """
         SELECT 
@@ -15,10 +15,9 @@ def saldo_operacional_mes(ano: int, mes: int) -> float:
 """
 
     resultado = executar_query(
-        sql,
-        {
-        "ano_mes": {ano_mes}
-        }
+        sql,        
+        {"ano_mes": ano_mes}
+        
     )
 
     return resultado[0]
