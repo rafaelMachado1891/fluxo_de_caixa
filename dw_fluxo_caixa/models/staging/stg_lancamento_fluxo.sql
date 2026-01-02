@@ -21,7 +21,7 @@ tabela_tratada AS (
         "Serie"::TEXT AS serie,
         "N"::INTEGER AS numero_da_parcela,
         "tipo"::TEXT AS tipo_pagamento,
-        "datareceb"::DATE AS data_recebimento,
+        "DataReceb"::DATE AS data_recebimento,
         "valor"::DECIMAL AS valor,
         "ContaContabil"::INTEGER AS conta_contabil_credito,
         "ContaContabilDebito"::INTEGER AS conta_contabil_debito,

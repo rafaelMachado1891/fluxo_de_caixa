@@ -7,11 +7,11 @@ class Conexao_dw:
     def __init__(self):
         load_dotenv()
 
-        self.database = os.getenv("DB_NAME")
-        self.usuario = os.getenv("DB_USER")
-        self.host = os.getenv("DB_HOST")
-        self.port = os.getenv("DB_PORT")
-        self.password = os.getenv("DB_PASSWORD")
+        self.database = os.getenv("POSTGRES_DB")
+        self.usuario = os.getenv("POSTGRES_USER")
+        self.host = os.getenv("POSTGRES_HOST")
+        self.port = os.getenv("POSTGRES_PORT")
+        self.password = os.getenv("POSTGRES_PASSWORD")
 
         self.url = (
             f"postgresql+psycopg2://"

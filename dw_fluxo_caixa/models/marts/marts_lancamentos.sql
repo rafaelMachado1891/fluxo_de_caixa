@@ -14,10 +14,12 @@ WITH lancamentos AS (
         situacao_titulo,     
         instituicao,
         id_cliente,
-        tipo_fluxo
+        tipo_fluxo,
+        EXTRACT(YEAR FROM vencimento)::text || '-' || LPAD(EXTRACT(MONTH FROM vencimento)::text, 2, '0') AS ano_mes
 
     FROM 
         {{ ref('int_lancamentos_consolidados') }}
+
 )
 
 SELECT * FROM lancamentos ORDER BY vencimento
