@@ -1,6 +1,8 @@
 WITH lancamentos AS (
     SELECT
         numero_titulo,
+        serie,
+        numero_da_parcela,
         data_emissao,
         vencimento,
         data_pagamento,
