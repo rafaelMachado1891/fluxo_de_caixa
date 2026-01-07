@@ -10,3 +10,9 @@ def executar_query(query: str, params: dict | None=None):
     with engine.connect() as conn:
         resultado = conn.execute(text(query), params or {})
         return resultado.fetchone()
+    
+def executar_query_all(sql: str, params: dict = None):
+    engine = Conexao_dw().criar_engine()
+    with engine.connect() as conn:
+        result = conn.execute(text(sql), params or {})
+        return [dict(row._mapping) for row in result.fetchall()]

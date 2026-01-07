@@ -1,35 +1,38 @@
-# import os
-
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-
-
-import streamlit as st
-from utils_db import Conexao_dw
-from sqlalchemy import text
-
-st.title("Teste de conexão com o banco")
-
-try:
-    conexao = Conexao_dw()
-    engine = conexao.criar_engine()
-
-    with engine.connect() as conn:
-        result = conn.execute(text("SELECT 1")).fetchone()
-
-    st.success(f"Conexão OK ✅ Resultado: {result[0]}")
-
-except Exception as e:
-    st.error("Erro ao conectar no banco ❌")
-    st.exception(e)
-
 import streamlit as st
 from agent import responder
 
 st.title("Assistente de Fluxo de Caixa")
 
-pergunta = st.text_input("Pergunte algo sobre o fluxo de caixa")
+# Estado da pergunta
+if "pergunta" not in st.session_state:
+    st.session_state.pergunta = ""
 
-if pergunta:
-    resposta = responder(pergunta)
-    st.success(resposta)
+# Estado de contexto (memória)
+if "contexto" not in st.session_state:
+    st.session_state.contexto = {
+        "ano": None,
+        "mes": None
+    }
+
+def enviar():
+    try:
+        resposta, novo_contexto = responder(
+            st.session_state.pergunta,
+            contexto=st.session_state.contexto
+        )
+        st.session_state.contexto.update(novo_contexto)
+        st.session_state.resposta = resposta
+    except Exception as e:
+        st.session_state.resposta = f"⚠️ {str(e)}"
+
+    # limpa a caixa de texto
+    st.session_state.pergunta = ""
+
+st.text_input(
+    "Pergunte algo sobre o fluxo de caixa",
+    key="pergunta",
+    on_change=enviar
+)
+
+if "resposta" in st.session_state:
+    st.success(st.session_state.resposta)
