@@ -9,7 +9,7 @@ models:
           - not_null
       
       - name: razao_social
-        descrition: 'razão social do terceiro'
+        description: 'razão social do terceiro'
         data_type: TEXT
 
   - name: dim_data
@@ -86,6 +86,9 @@ models:
       - name: recorrencia
         description: 'indica se a conta e recorrente ou nao'
         data_type: TEXT
+
+      - name: ano_mes
+        description: 'coluna mes ano referente a coluna vencimento'
     
   - name: dim_saldo_inicial
     description: 'tabela que mostra o saldo inicial de caixa'
@@ -98,11 +101,10 @@ models:
         description: 'valor apurado em caixa na data estipulada'
         data_type: DECIMAL
 
-  - name: mart_lancamentos
+  - name: marts_lancamentos
     description: 'tabela agrupada com os lancamentos de titulos e lancamentos avulsos no fluxo de caixa do ERP de origem'
     columns:
-      columns:
-      - name: numero_do_titulo
+      - name: numero_titulo
         description: 'numero do titulo vinculado ao lancamento'
         data_type: TEXT
         tests:
@@ -130,15 +132,18 @@ models:
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('dim_data')
-                field: data
-      
+              to: ref('dim_data')
+              field: data
+    
       - name: data_pagamento
         description: 'data de pagamento do titulo'
         data_type: DATE
         tests:
           - not_null
+
+      - name: prazo
+        description: 'prazo de pagamento do titulo data_pagamento - data emissao'
+        data_type: INTEGER
 
       - name: valor_titulo
         description: 'valor monetario do documento'
@@ -159,8 +164,8 @@ models:
         tests:
           - not_null
           - relationships:
-            to: ref('dim_instituicoes')
-            field: id_banco
+              to: ref('dim_instituicoes')
+              field: id_banco
 
       - name: situacao_titulo
         description: 'indica a situacao do titulo (pago/pendente/parcial)'
@@ -174,8 +179,8 @@ models:
         tests:
           - not_null
           - relationships:
-            to: ref('dim_plano_contas')
-            field: codigo
+              to: ref('dim_plano_contas')
+              field: codigo
           
       - name: id_cliente
         description: 'identificador do cliente'
@@ -183,8 +188,8 @@ models:
         tests: 
           - not_null
           - relationships:
-            to: ref('dim_clientes')
-            field: id_cliente
+              to: ref('dim_clientes')
+              field: id_cliente
       
       - name: tipo_lancamento
         description: 'indica se o lancamento corresponde a um titulo ou a uma movimentacao avulsa'
@@ -192,6 +197,10 @@ models:
       
       - name: tipo_fluxo
         description: 'indica se o registro e um fluxo realizado ou projetado'
+        data_type: TEXT
+
+      - name: ano_mes
+        description: 'coluna ano_mes referente a data de vencimento'
         data_type: TEXT
 
      

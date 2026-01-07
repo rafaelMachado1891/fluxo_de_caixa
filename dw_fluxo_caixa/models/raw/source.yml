@@ -147,6 +147,7 @@ sources:
           
           - name: valor
             description: 'valor do lancamento'
+            data_type: TEXT
 
           - name: ContaContabil 
             description: 'id da conta contabil quando credito'
