@@ -37,7 +37,7 @@ def top_5_contas_saidas(ano: int, mes: int) -> list[dict]:
           AND a.tipo_pagamento = 'S'
           AND a.ano_mes = :ano_mes
         GROUP BY b.conta_contabil
-        ORDER BY valor_total DESC
+        ORDER BY valor_total 
         LIMIT 5
     """
 
