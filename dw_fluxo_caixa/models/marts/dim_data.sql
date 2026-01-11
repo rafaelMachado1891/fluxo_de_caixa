@@ -6,7 +6,8 @@ SELECT
     day_of_month AS dia,
     quarter_of_year AS trimestre,
     year_number AS ano,
-    CONCAT((year_number:: TEXT || ' - '), month_of_year:: TEXT) AS ano_mes
+    CONCAT((year_number:: TEXT || ' - '), month_of_year:: TEXT) AS ano_mes,
+    week_of_year:: INTEGER AS semana_do_ano
 FROM 
     {{ ref('int_dim_date') }}
 )

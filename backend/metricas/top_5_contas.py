@@ -4,6 +4,9 @@ from metrics import top_5_contas_saidas
 class Top5ContasSaidas(Metrica):
     nome = "top_5_contas_saidas"
     parametros = ["ano", "mes"]
+    descricao = "5 princiapais contas de saida que impactaram o saldo de caixa no mês"
+    
+    palavras_chave = ["contas", "saídas", "principais"]
 
     def executar(self, **kwargs):
         return top_5_contas_saidas(
