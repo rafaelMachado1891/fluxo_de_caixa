@@ -5,7 +5,8 @@ class SaldoOperacionalMes(Metrica):
     nome = "saldo_operacional_mes"
     parametros = ["ano","mes"]
     descricao = "Saldo operacional de entradas menos saídas realizadas no mês"
-    palavras_chave = ["saldo", "resultado", "fechamento", "operacional"]
+    
+    dominio = "caixa"
 
     def executar(self, **kwargs):
         return saldo_operacional_mes(

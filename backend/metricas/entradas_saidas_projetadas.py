@@ -1,57 +1,54 @@
-from metrics import entradas_saidas_projetadas
+from metrics import calcular_total_saida_entradas_por_semana
 from metricas.base import Metrica
 import pandas as pd
 import tabulate
 
-class Entradas_Saidas_Projetadas(Metrica):
-    nome = "entradas_saidas_projetadas"
-    descricao = "tota de saidas e entradas projetadas agrupadas por mes e semana"
-    palavras_chave = ["saídas", "entradas", "projetadas", "futuras"]
-    parametros = ["ano","mes"]
+class EntradasSaidasProjetadas(Metrica):
+    nome = "total de entradas e saídas por semana"
+    descricao = "calcula entradas, saídas e saldo operacional por semana"
+    
+    parametros = ["ano", "mes"]
+    parametros_obrigatorios = []  # 👈 NENHUM obrigatório
+
+    dominio = "caixa"
+    fluxo = "projetado"
+    tags = [
+        "saidas",
+        "entradas",
+        "saldo operacional",
+        "pagamento",
+        "recebimento"
+    ]
 
     def executar(self, **kwargs):
-        return entradas_saidas_projetadas(
-            ano=kwargs["ano"],
-            mes=kwargs["mes"]
+        self.validar_parametros(**kwargs)
+
+        return calcular_total_saida_entradas_por_semana(
+            ano=kwargs.get("ano"),
+            mes=kwargs.get("mes")
         )
-    
+
     def responder(self, resultado, **kwargs) -> str:
-        # cria DataFrame
         df = pd.DataFrame(resultado)
 
-        # normaliza tipos
-        df["week_of_year"] = df["week_of_year"].astype(int)
-        df["valor"] = df["valor"].astype(float)
+        if df.empty:
+            return "⚠️ Não há dados projetados para o período informado."
 
-        # pivota Entradas (E) e Saídas (S)
-        tabela = (
-            df.pivot_table(
-                index="week_of_year",
-                columns="tipo_pagamento",
-                values="valor",
-                aggfunc="sum",
-                fill_value=0
-            )
-            .rename(columns={
-                "E": "Entradas (R$)",
-                "S": "Saídas (R$)"
-            })
-            .sort_index()
+        df["ano_mes"] = df["ano_mes"].astype(str)
+        df["semana_ano"] = df["semana_ano"].astype(int)
+        df["entradas"] = df["entradas"].astype(float)
+        df["saidas"] = df["saidas"].astype(float)
+        df["saldo_operacional"] = df["saldo_operacional"].astype(float)
+
+        tabela = df.copy()
+        tabela[["entradas", "saidas", "saldo_operacional"]] = (
+            tabela[["entradas", "saidas", "saldo_operacional"]]
+            .applymap(lambda x: f"{x:,.2f}")
         )
 
-        # cria saldo semanal
-        tabela["Saldo (R$)"] = tabela["Entradas (R$)"] + tabela["Saídas (R$)"]
+        markdown = tabela.to_markdown(index=False)
 
-        # formata valores
-        tabela = tabela.applymap(lambda x: f"{x:,.2f}")
+        mes = kwargs.get("mes")
+        ano = kwargs.get("ano")
 
-        # converte para markdown
-        markdown = tabela.reset_index().rename(
-            columns={"week_of_year": "Semana"}
-        ).to_markdown(index=False)
-
-        return (
-            f"### 📊 Fluxo de caixa projetado — "
-            f"{kwargs['mes']:02d}/{kwargs['ano']}\n\n"
-            f"{markdown}"
-        )
+        periodo = f"{mes:02d}/{ano}" if mes and ano else "semana atual"

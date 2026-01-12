@@ -6,8 +6,9 @@ import tabulate
 class SaldoOperacionalNegativo(Metrica):
     nome = "semanas com pressão sobre o caixa projetado"
     descricao = "lista de semanas com saldo operacional projetado negativo"
-    palavras_chave = ["pressão no caixa", "projetado", "negativo"]
+    
     parametros = ["ano","mes"]
+    dominio = "caixa"
 
     def executar(self, **kwargs):
         return saldo_operacional_projetado_negativo(

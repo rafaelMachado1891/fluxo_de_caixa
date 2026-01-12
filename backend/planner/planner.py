@@ -30,15 +30,15 @@ def interpretar_pergunta(pergunta: str, registry: dict[str, Metrica]) -> dict:
     except json.JSONDecodeError:
         raise ValueError("Planner retornou JSON inválido.")
 
-    # 🔒 valida métrica
     metrica = plano.get("metrica")
     if metrica not in registry:
         raise ValueError(f"Métrica '{metrica}' não existe.")
+    
+    parametros_aceitos = registry[metrica].parametros
 
-    # 🔒 valida parâmetros esperados
-    parametros_esperados = registry[metrica].parametros
-    for p in parametros_esperados:
-        if p not in plano:
-            raise ValueError(f"Parâmetro '{p}' ausente para a métrica '{metrica}'.")
+    plano_filtrado = {
+        "metrica": metrica,
+        **{k: v for k, v in plano.items() if k in parametros_aceitos}
+    }
 
-    return plano
+    return plano_filtrado
