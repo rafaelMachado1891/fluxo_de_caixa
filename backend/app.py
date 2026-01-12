@@ -1,5 +1,6 @@
 import streamlit as st
 from agent import responder
+import traceback
 
 st.title("Assistente de Fluxo de Caixa")
 
@@ -22,8 +23,9 @@ def enviar():
         )
         st.session_state.contexto.update(novo_contexto)
         st.session_state.resposta = resposta
-    except Exception as e:
-        st.session_state.resposta = f"⚠️ {str(e)}"
+    except Exception:
+        traceback.print_exc() 
+        st.session_state.resposta = f"⚠️ {str("erro")}"
 
     # limpa a caixa de texto
     st.session_state.pergunta = ""
