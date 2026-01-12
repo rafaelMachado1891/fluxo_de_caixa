@@ -12,7 +12,7 @@ tbl_titulos_transformada AS (
         data_emissao:: DATE AS data_emissao,
         vencimento:: DATE AS vencimento,
         data_pagamento:: DATE as data_pagamento,
-        valor_titulo:: DECIMAL AS valor_titulo,
+        REPLACE(valor_titulo::TEXT, ',', '')::DECIMAL AS valor_titulo,
         CASE WHEN
             tipo_credor = 2 OR tipo_credor = 3 THEN 'S'
             ELSE 'E' END:: text AS tipo_pagamento,

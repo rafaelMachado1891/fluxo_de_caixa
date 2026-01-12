@@ -19,11 +19,11 @@ def dag_executar_pipeline():
         executar_pipeline()
 
     task_dbt_seed = BashOperator(
-        task_id="dbt_seed",
-        bash_command="""
-        cd /usr/local/airflow/dw_fluxo_caixa &&
-        dbt seed
-        """
+          task_id="dbt_seed",
+          bash_command="""
+          cd /usr/local/airflow/dw_fluxo_caixa &&
+          dbt seed
+    """
     )
 
     task_dbt_run = BashOperator(
