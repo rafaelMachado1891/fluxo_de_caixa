@@ -1,6 +1,7 @@
 WITH tb_titulos AS (
 	SELECT 
 		Numero AS numero_titulo,
+		N AS n,
 		Tipo_C AS tipo_credor,
 		Serie  AS serie,
         Codigo_C AS id_cliente,
@@ -8,12 +9,12 @@ WITH tb_titulos AS (
 		Data_Em AS data_emissao,
 		Data_Ven AS vencimento,
 		Data_pag AS data_pagamento,
-		Valor_T AS valor_titulo,
+		'''' + FORMAT(Valor_T, 'F2', 'en-US') AS valor_titulo,
 		Instituicao AS instituicao,
 		situacao AS situacao_titulo,
 		ContaContabilCredito AS conta_contabil_credito,
 		ContaContabilDebito AS conta_contabil_debito,
-		CONCAT(Data_Inc, Hora_Inc) AS data_hora_lancamento 
+		CONCAT(Data_Inc, Hora_Inc) AS data_hora_lancamento
 	FROM Titulos
 	WHERE Data_Em > '2025-01-01'
 ),
@@ -38,6 +39,7 @@ SELECT
 	a.numero_titulo,
 	a.tipo_credor,
 	a.serie,
+	a.n,
 	a.id_cliente,
 	a.tipo_pagamento,
 	a.data_emissao,

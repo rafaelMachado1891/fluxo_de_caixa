@@ -12,7 +12,7 @@ class CarregarCsv:
         self.df: DataFrame | None = None
 
     def carregar_csv(self) -> DataFrame:
-        self.df = pd.read_csv(self.file_path)
+        self.df = pd.read_csv(self.file_path, sep=",",quotechar='"', encoding="utf-8-sig", engine="python")
         return self.df
 
     def renomear_colunas(
