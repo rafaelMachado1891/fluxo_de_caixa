@@ -33,12 +33,8 @@ def interpretar_pergunta(pergunta: str, registry: dict[str, Metrica]) -> dict:
     metrica = plano.get("metrica")
     if metrica not in registry:
         raise ValueError(f"Métrica '{metrica}' não existe.")
-    
-    parametros_aceitos = registry[metrica].parametros
 
-    plano_filtrado = {
+    return {
         "metrica": metrica,
-        **{k: v for k, v in plano.items() if k in parametros_aceitos}
+        **plano.get("parametros", {})
     }
-
-    return plano_filtrado
