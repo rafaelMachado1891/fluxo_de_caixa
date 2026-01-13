@@ -16,3 +16,19 @@ def executar_query_all(sql: str, params: dict = None):
     with engine.connect() as conn:
         result = conn.execute(text(sql), params or {})
         return [dict(row._mapping) for row in result.fetchall()]
+    
+def executar_query_scalar(sql: str, params: dict | None = None) -> float | None:
+    engine = Conexao_dw().criar_engine()
+
+    with engine.connect() as conn:
+        row = conn.execute(text(sql), params or {}).fetchone()
+
+        if row is None:
+            return None
+
+        valor = row[0]
+
+        if valor is None:
+            return None
+
+        return float(valor)
