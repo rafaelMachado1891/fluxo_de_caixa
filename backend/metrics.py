@@ -86,7 +86,7 @@ def calcular_saldo_final_projetado(ano: int | None = None, mes: int | None = Non
                 LEFT JOIN public_intermediate.int_dim_date b
                 ON a.vencimento = b.date_day
                 WHERE a.tipo_fluxo = 'PROJETADO'
-                AND a.ano_mes = '2026-01'
+                AND a.ano_mes = :ano_mes
             ),
 
             saldo_operacional AS (
@@ -96,7 +96,7 @@ def calcular_saldo_final_projetado(ano: int | None = None, mes: int | None = Non
                     public_marts.marts_lancamentos
                 WHERE tipo_fluxo = 'REALIZADO' 
                 AND 
-                    vencimento <  CURRENT_DATE     
+                    data_pagamento <  CURRENT_DATE     
             ),
 
             saldo_inicial AS (
@@ -105,7 +105,7 @@ def calcular_saldo_final_projetado(ano: int | None = None, mes: int | None = Non
                 FROM public_marts.dim_saldo_inicial
             ),
 
-           gregado AS (
+            agregado AS (
 
                 SELECT 
                 *                
@@ -130,4 +130,62 @@ def calcular_saldo_final_projetado(ano: int | None = None, mes: int | None = Non
     if resultado is None:
         return None
 
+    return (resultado)
+
+
+def calcular_cobertura_de_caixa (sql: str) -> float | None:
+      
+    
+    if resultado is None:
+        return None
+
+    executar_query_scalar(
+        sql = """"
+                WITH saldo_operacional_projetado AS (
+            SELECT 
+                ano_mes, 
+                SUM(valor_titulo) AS total_titulo
+            FROM 
+                public_marts.marts_lancamentos 
+            WHERE 
+                tipo_fluxo = 'PROJETADO' AND 
+                tipo_pagamento = 'S' 
+            GROUP BY 
+                ano_mes
+        ),
+
+        media_saldo_projetado AS (
+            SELECT 
+                AVG(total_titulo) AS saldo_operacional_medio_projetado
+            FROM 
+                saldo_operacional_projetado 
+            
+        ),
+        saldo_operacional_realizado AS (
+            SELECT
+                SUM(valor_titulo) AS saldo_operacional_realizado
+            FROM
+                public_marts.marts_lancamentos 
+            WHERE 
+                tipo_fluxo = 'REALIZADO' 
+        )
+        SELECT 
+            ROUND((saldo_operacional_realizado + saldo) / ABS(saldo_operacional_medio_projetado),0) AS cobertura_de_caixa
+            
+        FROM 
+            media_saldo_projetado 
+        CROSS JOIN 
+            saldo_operacional_realizado
+        CROSS JOIN 
+            public_marts.dim_saldo_inicial
+
+
+
+	
+
+
+        
+        
+        """
+        )
     return (resultado)
