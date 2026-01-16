@@ -21,24 +21,21 @@ class SaldoOperacionalProjetado(Metrica):
         }
 
         def executar(self, **kwargs):
-            return calcular_saldo_operacional_projetado(
+            saldo = calcular_saldo_operacional_projetado(
                 ano=kwargs.get("ano"),
                 mes=kwargs.get("mes")
             )
-
-        def responder(self, resultado, **kwargs) -> str:
-            saldo = resultado
-
-            if saldo is None:
-                return "⚠️ Não há dados projetados para o período informado."
-
-            mes = kwargs.get("mes", "mês atual")
-            ano = kwargs.get("ano", "ano atual")
-
-            resposta = (
-                f"## 💼 Saldo Operacional Projetado\n"
-                f"📅 **Período:** {mes}/{ano}\n\n"
-                f"O saldo operacional projetado para o período é de **R$ {saldo:,.2f}**."
-            )
-
-            return resposta
+            
+            return {
+                "metrica": self.nome,
+                "valor": saldo,
+                "status": "ok" if saldo is not None else "sem_dados",
+                "ano": kwargs.get("ano"),
+                "mes": kwargs.get("mes"),
+                "unidade": "BRL",
+                "tipo": self.fluxo,
+                "dominio": self.dominio,
+                "detalhes": None          
+            }
+            
+        

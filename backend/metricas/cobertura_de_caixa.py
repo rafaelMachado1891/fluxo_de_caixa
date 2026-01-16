@@ -11,17 +11,19 @@ class CoberturaDeCaixa(Metrica):
     parametros = {}
     
     def executar(self, **kwargs):
-        return calcular_cobertura_de_caixa()            
         
-    def responder(self, resultado, **kwargs) -> str:
-        cobertura = resultado
-
-        if cobertura is None:
-            return "⚠️ Não há dados suficientes para calcular a cobertura de caixa."
-
-        return  (
-            f"## 💼 Cobertura de Caixa\n\n"
-            f"A cobertura de caixa calculada é de **{cobertura:.2f}** meses."
-        )
+        resposta = calcular_cobertura_de_caixa()
+        
+        return {
+            "metrica": self.nome,
+            "valor": resposta,
+            "status": "ok" if resposta is not None else "sem_dados",
+            "ano": None,
+            "mes": None,
+            "unidade": "BRL",
+            "tipo": self.fluxo,
+            "dominio": self.dominio,
+            "detalhes": None
+        }
 
         
