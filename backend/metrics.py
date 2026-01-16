@@ -133,14 +133,11 @@ def calcular_saldo_final_projetado(ano: int | None = None, mes: int | None = Non
     return (resultado)
 
 
-def calcular_cobertura_de_caixa (sql: str) -> float | None:
+def calcular_cobertura_de_caixa () -> int | None:
       
-    
-    if resultado is None:
-        return None
-
-    executar_query_scalar(
-        sql = """"
+    return executar_query_scalar(    
+        
+        sql = """
                 WITH saldo_operacional_projetado AS (
             SELECT 
                 ano_mes, 
@@ -178,14 +175,10 @@ def calcular_cobertura_de_caixa (sql: str) -> float | None:
             saldo_operacional_realizado
         CROSS JOIN 
             public_marts.dim_saldo_inicial
-
-
-
-	
-
-
         
         
         """
-        )
-    return (resultado)
+    )
+    
+
+
