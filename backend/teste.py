@@ -1,8 +1,6 @@
-from utils_db import Conexao_dw
+from agente_conversacional import responder_usuario   # ajuste o import se o arquivo tiver outro nome
 
-c = Conexao_dw()
-print("host:", c.host)
-print("port:", c.port)
-
-engine = c.criar_engine()
-print("OK - conectou")
+if __name__ == "__main__":
+    pergunta = "Qual foi o saldo final projetado de janeiro de 2026?"
+    resposta = responder_usuario(pergunta)
+    print(resposta)

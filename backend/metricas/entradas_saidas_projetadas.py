@@ -2,6 +2,7 @@ from metricas.base import Metrica
 from metrics import calcular_total_entradas_saidas_por_mes
 import pandas as pd
 
+
 class EntradasSaidasProjetadas(Metrica):
     nome = "total de entradas e saídas por mês"
     descricao = "Entradas, saídas e saldo operacional do mês"
@@ -11,8 +12,9 @@ class EntradasSaidasProjetadas(Metrica):
     tags = [
         "entradas",
         "saidas",
-        "saldo operacional",
-        "mensal"
+        "mensal",
+        "receber",
+        "pagar"
     ]
 
     parametros = {
@@ -20,16 +22,43 @@ class EntradasSaidasProjetadas(Metrica):
         "mes": {"tipo": int}
     }
 
-    def executar(self, **kwargs):
-        return calcular_total_entradas_saidas_por_mes(
-            ano=kwargs.get("ano"),
-            mes=kwargs.get("mes")
-        )
+    def executar(self, **kwargs) -> dict:
+        registros = calcular_total_entradas_saidas_por_mes(
+        ano=kwargs.get("ano"),
+        mes=kwargs.get("mes")
+    )
 
-    def responder(self, resultado, **kwargs) -> str:
-        df = pd.DataFrame(resultado)
+        df = pd.DataFrame(registros)
 
         if df.empty:
-            return "⚠️ Não há dados projetados para o período informado."
+            return {
+                "metrica": self.nome,
+                "valor": None,
+                "status": "sem_dados",
+                "ano": kwargs.get("ano"),
+                "mes": kwargs.get("mes"),
+                "unidade": "BRL",
+                "tipo": self.fluxo,
+                "dominio": self.dominio,
+                "detalhes": None
+            }
 
-        return df.to_markdown(index=False)
+        saldo_total = df["saldo_operacional"].sum()
+        entradas_total = df["entradas"].sum()
+        saidas_total = df["saidas"].sum()
+
+        return {
+            "metrica": self.nome,
+            "valor": saldo_total,
+            "status": "ok",
+            "ano": kwargs.get("ano"),
+            "mes": kwargs.get("mes"),
+            "unidade": "BRL",
+            "tipo": self.fluxo,
+            "dominio": self.dominio,
+            "detalhes": {
+                "entradas_total": entradas_total,
+                "saidas_total": saidas_total,
+                "por_semana": df.to_dict(orient="records")
+            }
+        }
