@@ -1,6 +1,6 @@
 from metricas.registry import REGISTRY, carregar_metricas
 from planner.planner import interpretar_pergunta
-from agentes.conversational_agent import AgenteConversacionalLLM
+from .conversational_agent import AgenteConversacionalLLM
 
 carregar_metricas()
 

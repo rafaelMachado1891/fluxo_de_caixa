@@ -1,33 +1,29 @@
 import streamlit as st
-from agent import responder
-import traceback
+import requests
+
+API_URL = "http://localhost:8000/perguntar"
 
 st.title("Assistente de Fluxo de Caixa")
 
-# Estado da pergunta
 if "pergunta" not in st.session_state:
     st.session_state.pergunta = ""
 
-# Estado de contexto (memória)
-if "contexto" not in st.session_state:
-    st.session_state.contexto = {
-        "ano": None,
-        "mes": None
-    }
-
 def enviar():
     try:
-        resposta, novo_contexto = responder(
-            st.session_state.pergunta,
-            contexto=st.session_state.contexto
+        response = requests.post(
+            API_URL,
+            json={
+                "pergunta": st.session_state.pergunta
+            },
+            timeout=30
         )
-        st.session_state.contexto.update(novo_contexto)
-        st.session_state.resposta = resposta
-    except Exception:
-        traceback.print_exc() 
-        st.session_state.resposta = f"⚠️ {str("erro")}"
 
-    # limpa a caixa de texto
+        data = response.json()
+        st.session_state.resposta = data["resposta"]
+
+    except Exception as e:
+        st.session_state.resposta = "⚠️ Erro ao se comunicar com a API."
+
     st.session_state.pergunta = ""
 
 st.text_input(
