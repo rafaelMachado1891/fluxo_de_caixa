@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-API_URL = "http://localhost:8000/perguntar"
+API_URL = "http://127.0.0.1:8001/perguntar"
 
 st.title("Assistente de Fluxo de Caixa")
 
@@ -13,7 +13,8 @@ def enviar():
         response = requests.post(
             API_URL,
             json={
-                "pergunta": st.session_state.pergunta
+                "pergunta": st.session_state.pergunta,
+                "contexto": {"dominio": "financeiro"}
             },
             timeout=30
         )
@@ -22,10 +23,10 @@ def enviar():
         st.session_state.resposta = data["resposta"]
 
     except Exception as e:
-        st.session_state.resposta = "⚠️ Erro ao se comunicar com a API."
+        st.session_state.resposta = f"⚠️ Erro: {str(e)}"
 
     st.session_state.pergunta = ""
-
+    
 st.text_input(
     "Pergunte algo sobre o fluxo de caixa",
     key="pergunta",

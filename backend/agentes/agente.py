@@ -7,18 +7,27 @@ carregar_metricas()
 # 🔹 criado UMA vez (singleton simples)
 _agente = AgenteConversacionalLLM()
 
-def responder_usuario(pergunta: str, contexto: dict | None = None) -> str:
-    # 1. Planner
+def responder_usuario(pergunta: str, contexto=None):
+
     plano = interpretar_pergunta(pergunta, REGISTRY)
 
-    # 2. Métrica
-    metrica = REGISTRY[plano["metrica"]]
-    resultado = metrica.executar(**plano)
+    if not plano.get("metrica"):
+        return "Não consegui identificar uma métrica para essa pergunta."
 
-    # 3. Agente conversacional (reutilizado)
-    return _agente.responder(
+    metrica = REGISTRY[plano["metrica"]]
+
+    params = {k: v for k, v in plano.items() if k != "metrica"}
+
+    resultado = metrica.executar(**params)
+    resultado_dict = resultado.model_dump()
+
+    resposta = _agente.responder(
         pergunta=pergunta,
         plano=plano,
-        resultado=resultado,
+        resultado=resultado_dict,
         contexto=contexto
     )
+
+    return resposta
+
+

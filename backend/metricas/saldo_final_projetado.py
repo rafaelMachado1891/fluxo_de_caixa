@@ -1,5 +1,6 @@
 from metricas.base import Metrica
 from metrics import calcular_saldo_final_projetado
+from models.schema import ResultadoMetrica
 
 class SaldoFinalProjetado(Metrica):
     nome = "saldo final projetado"
@@ -24,14 +25,14 @@ class SaldoFinalProjetado(Metrica):
             mes=kwargs.get("mes")
         )
 
-        return {
-            "metrica": self.nome,
-            "valor": saldo,
-            "status": "ok" if saldo is not None else "sem_dados",
-            "ano": kwargs.get("ano"),
-            "mes": kwargs.get("mes"),
-            "unidade": "BRL",
-            "tipo": self.fluxo,
-            "dominio": self.dominio,
-            "detalhes": None
-        }
+        return ResultadoMetrica(
+            metrica=self.nome,
+            valor=saldo,
+            status="ok" if saldo is not None else "sem_dados",
+            ano=kwargs.get("ano"),
+            mes=kwargs.get("mes"),
+            unidade="BRL",
+            tipo=self.fluxo,
+            dominio=self.dominio,
+            detalhes=None
+        )

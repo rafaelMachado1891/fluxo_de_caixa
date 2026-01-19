@@ -25,3 +25,14 @@ class Conexao_dw:
         if self.engine is None:
             self.engine = create_engine(self.url)
         return self.engine
+    
+    
+    
+def normalizar_para_json(obj):
+    if isinstance(obj, Decimal):
+        return float(obj)
+    if isinstance(obj, dict):
+        return {k: normalizar_para_json(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [normalizar_para_json(v) for v in obj]
+    return obj
