@@ -25,10 +25,7 @@ def interpretar_pergunta(pergunta: str, registry: dict[str, Metrica]) -> dict:
 
     conteudo = resposta.choices[0].message.content.strip()
 
-    try:
-        plano = json.loads(conteudo)
-    except json.JSONDecodeError:
-        raise ValueError("Planner retornou JSON inválido.")
+    plano = json.loads(conteudo)
 
     metrica = plano.get("metrica")
     if metrica not in registry:

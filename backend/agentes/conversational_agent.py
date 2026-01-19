@@ -95,7 +95,7 @@ class AgenteConversacionalLLM(AgenteConversacional):
         {json.dumps(plano, ensure_ascii=False, indent=2)}
 
         Resultado:
-        {json.dumps(resultado, ensure_ascii=False, indent=2)}
+        json.dumps(resultado.model_dump(), ensure_ascii=False, indent=2)
 
         Explique de forma clara e objetiva.
         """
