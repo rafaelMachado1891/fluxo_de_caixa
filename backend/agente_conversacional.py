@@ -16,9 +16,11 @@ def responder_usuario(pergunta: str, contexto: dict | None = None) -> str:
     resultado = metrica.executar(**plano)
 
     # 3. Agente conversacional (reutilizado)
-    return _agente.responder(
+    retorno = _agente.responder(
         pergunta=pergunta,
         plano=plano,
         resultado=resultado,
         contexto=contexto
     )
+    
+    return retorno

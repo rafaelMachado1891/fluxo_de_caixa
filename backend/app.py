@@ -1,5 +1,5 @@
 import streamlit as st
-from agent import responder
+from agente_conversacional import responder_usuario
 import traceback
 
 st.title("Assistente de Fluxo de Caixa")
@@ -17,15 +17,16 @@ if "contexto" not in st.session_state:
 
 def enviar():
     try:
-        resposta, novo_contexto = responder(
+        resposta = responder_usuario(
             st.session_state.pergunta,
             contexto=st.session_state.contexto
         )
-        st.session_state.contexto.update(novo_contexto)
+
         st.session_state.resposta = resposta
+
     except Exception:
-        traceback.print_exc() 
-        st.session_state.resposta = f"⚠️ {str("erro")}"
+        traceback.print_exc()
+        st.session_state.resposta = "⚠️ Erro ao processar a pergunta."
 
     # limpa a caixa de texto
     st.session_state.pergunta = ""
