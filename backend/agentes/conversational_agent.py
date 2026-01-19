@@ -2,6 +2,7 @@ import json
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
+from utils_db import normalizar_para_json
 
 load_dotenv()
 _client = OpenAI(api_key=os.getenv("API_KEY"))
@@ -84,21 +85,25 @@ class AgenteConversacionalLLM(AgenteConversacional):
             return super().responder(pergunta, plano, resultado, contexto)
 
     def _montar_prompt(self, pergunta, plano, resultado, contexto=None):
+
+        resultado_json = normalizar_para_json(resultado)
+
         return f"""
-        Você é um assistente financeiro especializado em explicar resultados.
-        Use SOMENTE os dados abaixo.
+Você é um assistente financeiro.
 
-        Pergunta:
-        {pergunta}
+Use SOMENTE os dados abaixo.
 
-        Plano:
-        {json.dumps(plano, ensure_ascii=False, indent=2)}
+Pergunta:
+{pergunta}
 
-        Resultado:
-        json.dumps(resultado.model_dump(), ensure_ascii=False, indent=2)
+Plano:
+{json.dumps(plano, ensure_ascii=False, indent=2)}
 
-        Explique de forma clara e objetiva.
-        """
+Resultado:
+{json.dumps(resultado_json, ensure_ascii=False, indent=2)}
+
+Explique de forma clara e objetiva.
+"""
 
     def _chamar_llm(self, prompt: str) -> str:
         resp = _client.chat.completions.create(

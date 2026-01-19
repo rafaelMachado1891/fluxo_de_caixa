@@ -4,7 +4,7 @@ from models.schema import ResultadoMetrica
 
 class CoberturaDeCaixa(Metrica):
     nome = "cobertura de caixa"
-    descricao = "Calculo da Cobertura de caixa projetadaconsiderando o saldo atual de caixa"
+    descricao = "Calculo quantos meses o caixa sustenta a operação."
     dominio = "caixa"
     fluxo = "projetado"
     tags = ["cobertura de caixa"]
