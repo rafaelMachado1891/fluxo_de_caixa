@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-API_URL = "http://127.0.0.1:8001/perguntar"
+API_URL = "http://127.0.0.1:8000/perguntar"
 
 st.title("Assistente de Fluxo de Caixa")
 

@@ -1,6 +1,7 @@
 import os
 from sqlalchemy import create_engine, Engine
 from dotenv import load_dotenv
+from decimal import Decimal
 
 
 class Conexao_dw:

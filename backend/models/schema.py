@@ -26,3 +26,6 @@ class PerguntaRequest(BaseModel):
 
 class RespostaResponse(BaseModel):
     resposta: str
+
+    class Config:
+        from_attributes = True
