@@ -5,10 +5,10 @@ from agentes.agente import responder_usuario
 app = FastAPI()
 
 
-@app.post("/perguntar", response_model=RespostaResponse)
+@app.post("/perguntar")
 def perguntar(req: PerguntaRequest):
     resposta = responder_usuario(
         pergunta=req.pergunta,
         contexto=req.contexto
     )
-    return RespostaResponse(resposta=resposta)
+    return (resposta)

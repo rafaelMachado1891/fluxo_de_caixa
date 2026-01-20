@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import pandas as pd
 
 API_URL = "http://127.0.0.1:8000/perguntar"
 
@@ -20,7 +21,15 @@ def enviar():
         )
 
         data = response.json()
-        st.session_state.resposta = data["resposta"]
+
+        st.markdown(data["texto"])
+        if data["dados"].get("detalhes"):
+            tabela = data["dados"]["detalhes"].get("por_semana")
+            if tabela:
+                df = pd.DataFrame(tabela)
+                st.dataframe(df)
+
+        #st.session_state.resposta = data["resposta"]
 
     except Exception as e:
         st.session_state.resposta = f"⚠️ Erro: {str(e)}"
