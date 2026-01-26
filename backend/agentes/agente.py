@@ -3,6 +3,7 @@ from metricas.registry import REGISTRY, carregar_metricas
 from planner.planner import interpretar_pergunta
 from .conversational_agent import AgenteConversacionalLLM
 from logs.logger import setup_logger
+from analise_causal.analise import analisar_variacoes
 
 logger = setup_logger()
 carregar_metricas()
@@ -19,58 +20,106 @@ def responder_usuario(pergunta: str, contexto=None):
     })
 
     try:
-        # 1. Planejamento
+        # ==========================
+        # 1️⃣ VALIDAÇÃO
+        # ==========================
+        if not pergunta or len(pergunta.strip()) < 5:
+            return {
+                "success": False,
+                "message": "A pergunta é muito curta ou inválida.",
+                "data": None,
+                "meta": {
+                    "tempo_execucao": 0,
+                    "fonte": "motor_analitico_v1"
+                }
+            }
+
+        termos_validos = [
+            "fluxo", "caixa", "saldo",
+            "receita", "despesa",
+            "lucro", "custo", "faturamento",
+            "entradas", "saidas"
+        ]
+
+        if not any(t in pergunta.lower() for t in termos_validos):
+            return {
+                "success": False,
+                "message": "Só posso responder perguntas relacionadas a métricas financeiras.",
+                "data": None,
+                "meta": {
+                    "tempo_execucao": 0,
+                    "fonte": "motor_analitico_v1"
+                }
+            }
+
+        # ==========================
+        # 2️⃣ PLANEJAMENTO
+        # ==========================
         plano = interpretar_pergunta(pergunta, REGISTRY)
 
         logger.info({
             "evento": "plano_gerado",
-            "metrica": plano.get("metrica"),
-            "parametros": plano.get("parametros")
+            "plano": plano
         })
 
-        if not plano.get("metrica"):
-            logger.warning({
-                "evento": "metrica_nao_identificada",
-                "pergunta": pergunta
-            })
+        nome_metrica = plano.get("metrica")
+
+        if not nome_metrica or nome_metrica not in REGISTRY:
             return {
-                "texto": "Não consegui identificar uma métrica para essa pergunta.",
-                "dados": None,
-                "metrica": None
+                "success": False,
+                "message": "Não encontrei uma métrica válida para essa pergunta.",
+                "data": None,
+                "meta": {
+                    "tempo_execucao": 0,
+                    "fonte": "motor_analitico_v1"
+                }
             }
 
-        # 2. Execução da métrica
-        metrica = REGISTRY[plano["metrica"]]
+        # ==========================
+        # 3️⃣ EXECUÇÃO
+        # ==========================
+        metrica = REGISTRY[nome_metrica]
         params = {k: v for k, v in plano.items() if k != "metrica"}
 
         resultado = metrica.executar(**params)
         resultado_dict = resultado.model_dump()
 
-        logger.info({
-            "evento": "metrica_executada",
-            "metrica": plano["metrica"],
-            "status": resultado_dict.get("status")
-        })
+        causas = None
+        
+        if "mes" in params:
+            mes_atual = resultado_dict
+            mes_anterior = metrica.executar(
+                ano=params["ano"],
+                mes=params["mes"] - 1
+            ).model_dump()
 
-        # 3. Geração da resposta
+            causas = analisar_variacoes(mes_atual=mes_atual,mes_anterior=mes_anterior)
+
+        # ==========================
+        # 4️⃣ GERA RESPOSTA
+        # ==========================
         resposta = _agente.responder(
             pergunta=pergunta,
             plano=plano,
             resultado=resultado_dict,
+            analise=causas,
             contexto=contexto
         )
 
         duracao = round(time.time() - inicio, 3)
 
-        logger.info({
-            "evento": "resposta_gerada",
-            "tempo_execucao_s": duracao
-        })
-
         return {
-            "texto": resposta,
-            "dados": resultado_dict,
-            "metrica": plano["metrica"]
+            "success": True,
+            "message": resposta,
+            "data": {
+                "metrica": nome_metrica,
+                "resultado": resultado_dict,
+                "detalhes": resultado_dict.get("detalhes")
+            },
+            "meta": {
+                "tempo_execucao": duracao,
+                "fonte": "motor_analitico_v1"
+            }
         }
 
     except Exception as e:
@@ -80,8 +129,12 @@ def responder_usuario(pergunta: str, contexto=None):
         })
 
         return {
-            "texto": "Ocorreu um erro ao processar sua solicitação.",
-            "dados": None,
-            "metrica": None
+            "success": False,
+            "message": "Erro interno ao processar a solicitação.",
+            "data": None,
+            "meta": {
+                "tempo_execucao": round(time.time() - inicio, 3),
+                "fonte": "motor_analitico_v1"
+            }
         }
 

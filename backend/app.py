@@ -6,8 +6,8 @@ API_URL = "http://127.0.0.1:8000/perguntar"
 
 st.title("Assistente de Fluxo de Caixa")
 
-if "pergunta" not in st.session_state:
-    st.session_state.pergunta = ""
+if "resposta" not in st.session_state:
+    st.session_state.resposta = None
 
 def enviar():
     try:
@@ -21,26 +21,28 @@ def enviar():
         )
 
         data = response.json()
-
-        st.markdown(data["texto"])
-        if data["dados"].get("detalhes"):
-            tabela = data["dados"]["detalhes"].get("por_semana")
-            if tabela:
-                df = pd.DataFrame(tabela)
-                st.dataframe(df)
-
-        #st.session_state.resposta = data["resposta"]
+        st.session_state.resposta = data
 
     except Exception as e:
-        st.session_state.resposta = f"⚠️ Erro: {str(e)}"
+        st.session_state.resposta = {"erro": str(e)}
 
     st.session_state.pergunta = ""
-    
+
 st.text_input(
     "Pergunte algo sobre o fluxo de caixa",
     key="pergunta",
     on_change=enviar
 )
 
-if "resposta" in st.session_state:
-    st.success(st.session_state.resposta)
+if st.session_state.resposta:
+    resp = st.session_state.resposta
+
+    if not resp["success"]:
+        st.error(resp["message"])
+    else:
+        st.markdown(resp["message"])
+
+        detalhes = resp["data"].get("detalhes")
+        if detalhes and "por_semana" in detalhes:
+            df = pd.DataFrame(detalhes["por_semana"])
+            st.dataframe(df)
