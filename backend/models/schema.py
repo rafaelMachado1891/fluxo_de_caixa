@@ -46,3 +46,8 @@ class ApiResponse(BaseModel):
     message: str
     data: Optional[ApiData]
     meta: ApiMeta
+    
+class SnapshotFinanceiro(BaseModel):
+    entradas: float
+    saidas: float
+    saldo_operacional: float
