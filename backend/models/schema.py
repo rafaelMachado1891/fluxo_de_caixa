@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, Literal, Dict, Any
+from typing import Optional, Literal, Dict, Any, List
 from decimal import Decimal
 
 class ResultadoMetrica(BaseModel):
@@ -23,9 +23,26 @@ class PerguntaRequest(BaseModel):
     pergunta: str
     contexto: Optional[Dict[str, Any]] = None
 
+class AnaliseCausal(BaseModel):
+    tipo: str
+    descricao: str
+    impacto: float
 
-class RespostaResponse(BaseModel):
-    resposta: str
 
-    class Config:
-        from_attributes = True
+class ApiMeta(BaseModel):
+    tempo_execucao: float
+    fonte: str = "motor_analitico_v1"
+
+
+class ApiData(BaseModel):
+    metrica: Optional[str]
+    resultado: Optional[ResultadoMetrica]
+    detalhes: Optional[dict[str, Any]]
+    analise: Optional[List[AnaliseCausal]]
+
+
+class ApiResponse(BaseModel):
+    success: bool
+    message: str
+    data: Optional[ApiData]
+    meta: ApiMeta

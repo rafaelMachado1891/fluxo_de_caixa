@@ -9,7 +9,7 @@ from metricas.base import Metrica
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv("API_KEY"))
-
+   
 
 def interpretar_pergunta(pergunta: str, registry: dict[str, Metrica]) -> dict:
     system_prompt = montar_system_prompt(registry)
