@@ -7,7 +7,7 @@ API_URL = "http://127.0.0.1:8000/perguntar"
 st.title("Assistente de Fluxo de Caixa")
 
 if "resposta" not in st.session_state:
-    st.session_state.resposta = None
+    st.session_state.resposta = {}
 
 def enviar():
     try:
@@ -15,18 +15,22 @@ def enviar():
             API_URL,
             json={
                 "pergunta": st.session_state.pergunta,
-                "contexto": {"dominio": "financeiro"}
+                "contexto": st.session_state.get("contexto", {})
             },
             timeout=30
         )
 
-        data = response.json()
-        st.session_state.resposta = data
+        st.session_state.resposta = response.json()
 
     except Exception as e:
-        st.session_state.resposta = {"erro": str(e)}
+        st.session_state.resposta = {
+            "success": False,
+            "message": str(e),
+            "data": {}
+        }
 
     st.session_state.pergunta = ""
+
 
 st.text_input(
     "Pergunte algo sobre o fluxo de caixa",
@@ -34,24 +38,26 @@ st.text_input(
     on_change=enviar
 )
 
+# ============================
+# 🔥 PROTEÇÃO DEFINITIVA
+# ============================
+data = st.session_state.resposta or {}
 
-if st.session_state.resposta:
-    data = st.session_state.resposta
-
-if data.get("message"):
+# ============================
+# RESPOSTA PRINCIPAL
+# ============================
+if isinstance(data, dict) and data.get("message"):
     st.markdown(data["message"])
 
-resumo = data.get("data", {}).get("resumo")
-analise = data.get("data", {}).get("analise")
+# ============================
+# DETALHES
+# ============================
+detalhes = (
+    data.get("data", {}).get("detalhes")
+    if isinstance(data.get("data"), dict)
+    else None
+)
 
-if resumo:
-    st.subheader("📊 Resumo Financeiro")
-    st.dataframe(pd.DataFrame([resumo]))
-
-if analise:
-    st.subheader("📉 Análise")
-    for item in analise:
-        st.markdown(
-            f"- **{item['tipo']}**: {item['descricao']} "
-            f"(Impacto: {item['impacto']})"
-        )
+if detalhes:
+    st.subheader("📊 Detalhes")
+    st.dataframe(pd.DataFrame([detalhes]))
