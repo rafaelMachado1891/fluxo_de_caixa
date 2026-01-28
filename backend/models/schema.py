@@ -23,12 +23,6 @@ class PerguntaRequest(BaseModel):
     pergunta: str
     contexto: Optional[Dict[str, Any]] = None
 
-class AnaliseCausal(BaseModel):
-    tipo: str
-    descricao: str
-    impacto: float
-
-
 class ApiMeta(BaseModel):
     tempo_execucao: float
     fonte: str = "motor_analitico_v1"
@@ -38,7 +32,7 @@ class ApiData(BaseModel):
     metrica: Optional[str]
     resultado: Optional[ResultadoMetrica]
     detalhes: Optional[dict[str, Any]]
-    analise: Optional[List[AnaliseCausal]]
+    
 
 
 class ApiResponse(BaseModel):
@@ -46,8 +40,3 @@ class ApiResponse(BaseModel):
     message: str
     data: Optional[ApiData]
     meta: ApiMeta
-    
-class SnapshotFinanceiro(BaseModel):
-    entradas: float
-    saidas: float
-    saldo_operacional: float

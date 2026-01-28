@@ -4,51 +4,57 @@ def montar_system_prompt(registry: dict[str, Metrica]) -> str:
     blocos = []
 
     for m in registry.values():
-        bloco = f"""
+        blocos.append(f"""
 - nome: {m.nome}
   descricao: {m.descricao}
   dominio: {m.dominio}
-  fluxo: {m.fluxo}
+  tags: {", ".join(getattr(m, "tags", []))}
   parametros: {", ".join(m.parametros.keys())}
-"""
-        blocos.append(bloco)
+""")
 
     metricas_texto = "\n".join(blocos)
 
     return f"""
-Você é um agente especializado EXCLUSIVAMENTE em interpretação de métricas financeiras.
+Você é um classificador de intenção financeira.
 
-Sua função é analisar a pergunta do usuário e retornar um JSON que identifique:
-- qual métrica deve ser usada
-- quais parâmetros devem ser aplicados
+Sua função é:
+- Identificar se a pergunta menciona EXPLICITAMENTE uma métrica
+- Retornar o nome exato da métrica quando houver clareza
+- Caso contrário, retornar "INDETERMINADO"
 
-⚠️ REGRAS OBRIGATÓRIAS:
-- Responda APENAS com JSON válido.
-- NÃO escreva explicações, textos ou comentários fora do JSON.
-- NÃO invente métricas.
-- NÃO invente parâmetros.
-- NÃO responda perguntas fora do domínio financeiro.
-- Se nenhuma métrica for compatível, retorne o JSON de fallback abaixo.
-- Sempre respeite exatamente o formato solicitado.
-- Se houver lista de causas, explique-as de forma clara.
+⚠️ REGRAS:
+- NÃO use contexto de conversa
+- NÃO faça inferências
+- NÃO invente métricas
+- NÃO explique nada
+- NÃO responda fora do JSON
+- NÃO tente deduzir variação ou comparação
 
 📌 MÉTRICAS DISPONÍVEIS:
 {metricas_texto}
 
-📌 FORMATO DE SAÍDA (OBRIGATÓRIO):
+📌 FORMATO OBRIGATÓRIO:
 {{
-  "dominio": "<contas|caixa|ranking|outro>",
-  "metrica": "<nome_da_metrica_ou_null>",
+  "metrica": "<nome_da_metrica_ou_INDETERMINADO>",
   "parametros": {{
     "ano": <int ou null>,
     "mes": <int ou null>
   }}
 }}
 
-📌 FORMATO DE FALLBACK (se não houver métrica válida):
+📌 EXEMPLOS:
+
+Pergunta: "Qual o saldo operacional de fevereiro?"
+Resposta:
 {{
-  "dominio": null,
-  "metrica": null,
+  "metrica": "saldo operacional projetado",
+  "parametros": {{ "ano": 2026, "mes": 2 }}
+}}
+
+Pergunta: "Houve melhora ou piora?"
+Resposta:
+{{
+  "metrica": "INDETERMINADO",
   "parametros": {{}}
 }}
 """

@@ -3,7 +3,6 @@ from metricas.registry import REGISTRY, carregar_metricas
 from planner.planner import interpretar_pergunta
 from .conversational_agent import AgenteConversacionalLLM
 from logs.logger import setup_logger
-from analise_causal.analise import analisar_variacoes, extrair_snapshot
 
 
 logger = setup_logger()
@@ -12,7 +11,44 @@ carregar_metricas()
 _agente = AgenteConversacionalLLM()
 
 
-def responder_usuario(pergunta: str, contexto=None):
+def resolver_contexto(plano: dict, contexto: dict | None):
+    """
+    Resolve perguntas implícitas como:
+    'melhorou?', 'piorou?', 'aumentou?'
+    usando o último contexto válido.
+    """
+    if plano.get("metrica"):
+        return plano
+
+    if not contexto:
+        return plano
+
+    ultima_metrica = contexto.get("ultima_metrica")
+    ultimo_mes = contexto.get("ultimo_mes")
+    ultimo_ano = contexto.get("ultimo_ano")
+
+    if not ultima_metrica:
+        return plano
+
+    # assume que perguntas sem métrica são comparações
+    return {
+        "metrica": f"variacao_{ultima_metrica}",
+        "ano": ultimo_ano,
+        "mes": ultimo_mes
+    }
+
+
+def atualizar_contexto(contexto: dict, plano: dict):
+    """Salva o estado da conversa"""
+    if contexto is None:
+        return
+
+    contexto["ultima_metrica"] = plano.get("metrica")
+    contexto["ultimo_ano"] = plano.get("ano")
+    contexto["ultimo_mes"] = plano.get("mes")
+
+
+def responder_usuario(pergunta: str, contexto: dict | None = None):
     inicio = time.time()
 
     logger.info({
@@ -25,31 +61,24 @@ def responder_usuario(pergunta: str, contexto=None):
         # 1️⃣ VALIDAÇÃO
         # ==========================
         if not pergunta or len(pergunta.strip()) < 5:
-            return _erro("A pergunta é muito curta ou inválida.")
-
-        termos_validos = [
-            "fluxo", "caixa", "saldo",
-            "receita", "despesa",
-            "lucro", "custo", "faturamento",
-            "entradas", "saidas"
-        ]
-
-        if not any(t in pergunta.lower() for t in termos_validos):
-            return _erro("Só posso responder perguntas relacionadas a métricas financeiras.")
+            return "A pergunta é muito curta ou inválida."
 
         # ==========================
         # 2️⃣ PLANEJAMENTO
         # ==========================
         plano = interpretar_pergunta(pergunta, REGISTRY)
 
+        # 🧠 Resolve contexto implícito
+        plano = resolver_contexto(plano, contexto)
+
         logger.info({
-            "evento": "plano_gerado",
+            "evento": "plano_resolvido",
             "plano": plano
         })
 
         nome_metrica = plano.get("metrica")
         if not nome_metrica or nome_metrica not in REGISTRY:
-            return _erro("Não encontrei uma métrica válida para essa pergunta.")
+            return "Não encontrei uma métrica válida para essa pergunta."
 
         # ==========================
         # 3️⃣ EXECUÇÃO DA MÉTRICA
@@ -60,29 +89,16 @@ def responder_usuario(pergunta: str, contexto=None):
         resultado = metrica.executar(**params)
         resultado_dict = resultado.model_dump()
 
+        logger.info({
+            "evento": "metrica_executada",
+            "metrica": nome_metrica,
+            "resultado": resultado_dict
+        })
+
         # ==========================
-        # 4️⃣ ANÁLISE CAUSAL (SE APLICÁVEL)
+        # 4️⃣ ATUALIZA CONTEXTO
         # ==========================
-        causas = None
-
-        if "mes" in params:
-            snapshot_atual = extrair_snapshot(resultado_dict)
-
-            if params.get("mes") > 1:
-                resultado_anterior = metrica.executar(
-                    ano=params["ano"],
-                    mes=params["mes"] - 1
-                )
-                snapshot_anterior = extrair_snapshot(
-                    resultado_anterior.model_dump()
-                )
-            else:
-                snapshot_anterior = None
-
-            causas = analisar_variacoes(
-                atual=snapshot_atual,
-                anterior=snapshot_anterior
-            )
+        atualizar_contexto(contexto, plano)
 
         # ==========================
         # 5️⃣ RESPOSTA DO LLM
@@ -91,7 +107,6 @@ def responder_usuario(pergunta: str, contexto=None):
             pergunta=pergunta,
             plano=plano,
             resultado=resultado_dict,
-            analise=causas,
             contexto=contexto
         )
 
@@ -103,7 +118,6 @@ def responder_usuario(pergunta: str, contexto=None):
             "data": {
                 "metrica": nome_metrica,
                 "resultado": resultado_dict,
-                "analise": causas,
                 "detalhes": resultado_dict.get("detalhes")
             },
             "meta": {
@@ -118,20 +132,4 @@ def responder_usuario(pergunta: str, contexto=None):
             "erro": str(e)
         })
 
-        return _erro("Erro interno ao processar a solicitação.")
-
-
-# ==========================
-# Helpers
-# ==========================
-
-def _erro(msg: str):
-    return {
-        "success": False,
-        "message": msg,
-        "data": None,
-        "meta": {
-            "tempo_execucao": 0,
-            "fonte": "motor_analitico_v1"
-        }
-    }
+        return "Erro interno ao processar a solicitação."

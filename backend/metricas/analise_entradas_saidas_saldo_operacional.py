@@ -14,7 +14,9 @@ class VariacoesMetricas(Metrica):
         "redução",
         "aumento",
         "variação",
-        "relação"
+        "relação",
+        "piora",
+        "melhora"
     ]
 
     parametros = {
