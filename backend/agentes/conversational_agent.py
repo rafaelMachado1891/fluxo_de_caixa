@@ -9,7 +9,7 @@ _client = OpenAI(api_key=os.getenv("API_KEY"))
 
 
 class AgenteConversacional:
-    def responder(self, pergunta, plano, resultado, contexto=None, analise=None):
+    def responder(self, pergunta, plano, resultado, contexto=None):
         status = resultado["status"]
 
         if status == "sem_dados":
@@ -38,7 +38,7 @@ class AgenteConversacional:
             f"O valor apurado foi **{valor_fmt}**."
         )
 
-        if resultado.get("detalhes"):
+        if resultado["detalhes"]:
             resposta += self._renderizar_detalhes(resultado["detalhes"])
 
         return resposta
@@ -64,10 +64,10 @@ class AgenteConversacional:
     def _renderizar_detalhes(self, detalhes):
         linhas = []
 
-        if "entradas" in detalhes:
-            linhas.append(f"- 💰 Entradas: R$ {detalhes['entradas']:,.2f}")
-        if "saidas" in detalhes:
-            linhas.append(f"- 💸 Saídas: R$ {detalhes['saidas']:,.2f}")
+        if "entradas_total" in detalhes:
+            linhas.append(f"- 💰 Entradas: R$ {detalhes['entradas_total']:,.2f}")
+        if "saidas_total" in detalhes:
+            linhas.append(f"- 💸 Saídas: R$ {detalhes['saidas_total']:,.2f}")
 
         if not linhas:
             return ""
@@ -75,32 +75,23 @@ class AgenteConversacional:
         return "\n\n### 🔎 Detalhamento\n" + "\n".join(linhas)
 
 
-# ======================================================
-# AGENTE COM IA (ÚNICO!)
-# ======================================================
-
 class AgenteConversacionalLLM(AgenteConversacional):
 
-    def responder(self, pergunta, plano, resultado, analise=None, contexto=None):
+    def responder(self, pergunta, plano, resultado,analise=None, contexto=None):
+        prompt = self._montar_prompt(pergunta, plano, resultado, analise, contexto)
         try:
-            prompt = self._montar_prompt(
-                pergunta=pergunta,
-                plano=plano,
-                resultado=resultado,
-                analise=analise
-            )
             return self._chamar_llm(prompt)
         except Exception:
-            return super().responder(pergunta, plano, resultado, contexto, analise)
+            return super().responder(pergunta, plano, resultado, contexto)
 
-    def _montar_prompt(self, pergunta, plano, resultado, analise=None):
+    def _montar_prompt(self, pergunta, plano, resultado, analise=None, contexto=None):
 
         resultado_json = normalizar_para_json(resultado)
 
-        prompt = f"""
-Você é um analista financeiro.
+        return f"""
+Você é um assistente financeiro.
 
-Use SOMENTE os dados abaixo para responder.
+Use SOMENTE os dados abaixo.
 
 Pergunta:
 {pergunta}
@@ -110,18 +101,9 @@ Plano:
 
 Resultado:
 {json.dumps(resultado_json, ensure_ascii=False, indent=2)}
+
+Explique de forma clara e objetiva.
 """
-
-        if analise:
-            prompt += f"""
-
-Análise encontrada:
-{json.dumps(analise, ensure_ascii=False, indent=2)}
-
-Explique os resultados considerando essas variações.
-"""
-
-        return prompt
 
     def _chamar_llm(self, prompt: str) -> str:
         resp = _client.chat.completions.create(

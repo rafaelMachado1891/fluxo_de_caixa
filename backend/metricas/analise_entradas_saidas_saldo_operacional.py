@@ -9,13 +9,6 @@ class VariacoesMetricas(Metrica):
     dominio = "caixa"
     fluxo = None
 
-    tags = [
-        "redução",
-        "aumento",
-        "variação",
-        "queda"
-    ]
-
     parametros = {
         "ano": {"tipo": int},
         "mes": {"tipo": int}
