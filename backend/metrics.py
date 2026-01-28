@@ -184,53 +184,53 @@ def calcular_cobertura_de_caixa () -> int | None:
 def calcular_variacoes_saidas_entradas_saldo_operacional(
         ano: int | None = None, 
         mes: int | None = None
-) -> list[dict]:
+    ) -> list[dict]:
+    
+     hoje = date.today()
 
-    hoje = date.today()
+     ano = ano if ano is not None else hoje.year
+     mes = mes if mes is not None else hoje.month
 
-    ano = ano if ano is not None else hoje.year
-    mes = mes if mes is not None else hoje.month
+     ano_mes = f"{ano}-{mes:02d}"
 
-    ano_mes = f"{ano}-{mes:02d}"
+     return executar_query(
+         """
+            WITH lancamentos AS (
+	SELECT
+		ano_mes,
+		SUM(valor_titulo) FILTER (WHERE tipo_pagamento = 'E') AS entradas,
+		SUM(valor_titulo) FILTER (WHERE tipo_pagamento = 'S') AS saidas,
+		SUM(valor_titulo) FILTER (WHERE tipo_pagamento = 'E') + 
+		SUM(valor_titulo) FILTER (WHERE tipo_pagamento = 'S') AS saldo_operacional
+	FROM public_marts.marts_lancamentos a
+	LEFT JOIN public_intermediate.int_dim_date b
+	ON a.vencimento = b.date_day
+	GROUP BY 
+		ano_mes
+	ORDER BY 
+		ano_mes
+),
 
-    query = """
-        WITH lancamentos AS (
-        SELECT
-            ano_mes,
-            SUM(valor_titulo) FILTER (WHERE tipo_pagamento = 'E') AS entradas,
-            SUM(valor_titulo) FILTER (WHERE tipo_pagamento = 'S') AS saidas,
-            SUM(valor_titulo) FILTER (WHERE tipo_pagamento = 'E') + 
-            SUM(valor_titulo) FILTER (WHERE tipo_pagamento = 'S') AS saldo_operacional
-        FROM public_marts.marts_lancamentos a
-        LEFT JOIN public_intermediate.int_dim_date b
-        ON a.vencimento = b.date_day
-        GROUP BY 
-            ano_mes
-        ORDER BY 
-            ano_mes
-        ),
+variacoes AS (
+	SELECT
+		ano_mes,
+		entradas,
+		LAG(entradas) OVER(ORDER BY ano_mes) AS entradas_mes_anterior,
+		ROUND(entradas / LAG(entradas) OVER(ORDER BY ano_mes) -1,2)AS variacoes_entradas,
+		saidas,
+		LAG(saidas) OVER(ORDER BY ano_mes) AS saidas_mes_anterior,
+		ROUND(saidas / LAG(saidas) OVER(ORDER BY ano_mes) -1,2)AS variacoes_saidas,
+		saldo_operacional,
+		LAG(saldo_operacional) OVER(ORDER BY ano_mes) AS saldo_operacional_mes_anterior,
+		ROUND(saldo_operacional / LAG(saldo_operacional) OVER(ORDER BY ano_mes) -1,2) AS variacao_saldo_operacional
+		
+	FROM 
+		lancamentos
 
-        variacoes AS (
-            SELECT
-                ano_mes,
-                entradas,
-                LAG(entradas) OVER(ORDER BY ano_mes) AS entradas_mes_anterior,
-                ROUND(entradas / LAG(entradas) OVER(ORDER BY ano_mes) -1,2)AS variacoes_entradas,
-                saidas,
-                LAG(saidas) OVER(ORDER BY ano_mes) AS saidas_mes_anterior,
-                ROUND(saidas / LAG(saidas) OVER(ORDER BY ano_mes) -1,2)AS variacoes_saidas,
-                saldo_operacional,
-                LAG(saldo_operacional) OVER(ORDER BY ano_mes) AS saldo_operacional_mes_anterior,
-                ROUND(saldo_operacional / LAG(saldo_operacional) OVER(ORDER BY ano_mes) -1,2) AS variacao_saldo_operacional                    
-            FROM 
-                lancamentos
-                )
+    )
 
-        select * from variacoes WHERE ano_mes = :ano_mes
-                
-"""
-     
-    return executar_query_all(query, {"ano_mes": ano_mes})
-        
-
-
+    select * from variacoes WHERE ano_mes = :ano_mes
+            
+    """,
+        {"ano_mes": ano_mes}
+    )

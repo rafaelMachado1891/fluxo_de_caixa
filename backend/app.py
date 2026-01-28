@@ -34,15 +34,15 @@ st.text_input(
     on_change=enviar
 )
 
+
 if st.session_state.resposta:
-    resp = st.session_state.resposta
+    data = st.session_state.resposta
 
-    if not resp["success"]:
-        st.error(resp["message"])
-    else:
-        st.markdown(resp["message"])
+    if "texto" in data:
+        st.markdown(data["texto"])
 
-        detalhes = resp["data"].get("detalhes")
-        if detalhes and "por_semana" in detalhes:
-            df = pd.DataFrame(detalhes["por_semana"])
+    if data.get("dados", {}).get("detalhes"):
+        tabela = data["dados"]["detalhes"].get("por_semana")
+        if tabela:
+            df = pd.DataFrame(tabela)
             st.dataframe(df)
