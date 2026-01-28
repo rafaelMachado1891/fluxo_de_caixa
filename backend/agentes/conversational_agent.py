@@ -77,14 +77,14 @@ class AgenteConversacional:
 
 class AgenteConversacionalLLM(AgenteConversacional):
 
-    def responder(self, pergunta, plano, resultado, contexto=None):
-        prompt = self._montar_prompt(pergunta, plano, resultado, contexto)
+    def responder(self, pergunta, plano, resultado,analise=None, contexto=None):
+        prompt = self._montar_prompt(pergunta, plano, resultado, analise, contexto)
         try:
             return self._chamar_llm(prompt)
         except Exception:
             return super().responder(pergunta, plano, resultado, contexto)
 
-    def _montar_prompt(self, pergunta, plano, resultado, contexto=None):
+    def _montar_prompt(self, pergunta, plano, resultado, analise=None, contexto=None):
 
         resultado_json = normalizar_para_json(resultado)
 

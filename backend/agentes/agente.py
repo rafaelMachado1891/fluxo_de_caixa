@@ -3,7 +3,8 @@ from metricas.registry import REGISTRY, carregar_metricas
 from planner.planner import interpretar_pergunta
 from .conversational_agent import AgenteConversacionalLLM
 from logs.logger import setup_logger
-from analise_causal.analise import analisar_variacoes
+from analise_causal.analise import analisar_variacoes, extrair_snapshot
+
 
 logger = setup_logger()
 carregar_metricas()
@@ -87,13 +88,20 @@ def responder_usuario(pergunta: str, contexto=None):
         causas = None
         
         if "mes" in params:
-            mes_atual = resultado_dict
-            mes_anterior = metrica.executar(
+            snapshot_atual = extrair_snapshot(resultado_dict)
+
+            resultado_anterior = metrica.executar(
                 ano=params["ano"],
                 mes=params["mes"] - 1
             ).model_dump()
 
-            causas = analisar_variacoes(mes_atual=mes_atual,mes_anterior=mes_anterior)
+            snapshot_anterior = extrair_snapshot(resultado_anterior)
+
+            causas = analisar_variacoes(
+                atual=snapshot_atual,
+                anterior=snapshot_anterior
+            )
+
 
         # ==========================
         # 4️⃣ GERA RESPOSTA
@@ -114,6 +122,7 @@ def responder_usuario(pergunta: str, contexto=None):
             "data": {
                 "metrica": nome_metrica,
                 "resultado": resultado_dict,
+                "analise": causas,
                 "detalhes": resultado_dict.get("detalhes")
             },
             "meta": {
