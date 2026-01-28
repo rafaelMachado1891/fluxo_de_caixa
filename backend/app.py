@@ -38,11 +38,20 @@ st.text_input(
 if st.session_state.resposta:
     data = st.session_state.resposta
 
-    if "texto" in data:
-        st.markdown(data["texto"])
+if data.get("message"):
+    st.markdown(data["message"])
 
-    if data.get("dados", {}).get("detalhes"):
-        tabela = data["dados"]["detalhes"].get("por_semana")
-        if tabela:
-            df = pd.DataFrame(tabela)
-            st.dataframe(df)
+resumo = data.get("data", {}).get("resumo")
+analise = data.get("data", {}).get("analise")
+
+if resumo:
+    st.subheader("📊 Resumo Financeiro")
+    st.dataframe(pd.DataFrame([resumo]))
+
+if analise:
+    st.subheader("📉 Análise")
+    for item in analise:
+        st.markdown(
+            f"- **{item['tipo']}**: {item['descricao']} "
+            f"(Impacto: {item['impacto']})"
+        )

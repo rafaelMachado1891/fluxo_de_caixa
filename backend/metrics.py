@@ -193,7 +193,7 @@ def calcular_variacoes_saidas_entradas_saldo_operacional(
 
      ano_mes = f"{ano}-{mes:02d}"
 
-     return executar_query(
+     return executar_query_all(
          """
             WITH lancamentos AS (
 	SELECT

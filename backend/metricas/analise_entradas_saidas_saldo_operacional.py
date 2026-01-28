@@ -4,10 +4,18 @@ from models.schema import ResultadoMetrica
 
 
 class VariacoesMetricas(Metrica):
-    nome = "variacao_metricas_financeiras"
+    nome = "análise de variação do fluxo de caixa"
     descricao = "Variação mensal de entradas, saídas e saldo operacional"
     dominio = "caixa"
     fluxo = None
+
+    tags = [
+        "queda", 
+        "redução",
+        "aumento",
+        "variação",
+        "relação"
+    ]
 
     parametros = {
         "ano": {"tipo": int},
@@ -34,8 +42,7 @@ class VariacoesMetricas(Metrica):
                 detalhes=None
             )
 
-        # 🔥 pega o único registro retornado
-        dados = registros[0]
+        dados = registros[0]  # ✅ sempre dict
 
         return ResultadoMetrica(
             metrica=self.nome,
@@ -47,14 +54,14 @@ class VariacoesMetricas(Metrica):
             tipo=self.fluxo,
             dominio=self.dominio,
             detalhes={
-                "entradas": dados["entradas"],
-                "entradas_mes_anterior": dados["entradas_mes_anterior"],
-                "variacao_entradas": dados["variacoes_entradas"],
-                "saidas": dados["saidas"],
-                "saidas_mes_anterior": dados["saidas_mes_anterior"],
-                "variacao_saidas": dados["variacoes_saidas"],
-                "saldo_operacional": dados["saldo_operacional"],
-                "saldo_operacional_mes_anterior": dados["saldo_operacional_mes_anterior"],
-                "variacao_saldo_operacional": dados["variacao_saldo_operacional"],
+                "entradas": dados.get("entradas"),
+                "entradas_mes_anterior": dados.get("entradas_mes_anterior"),
+                "variacao_entradas": dados.get("variacoes_entradas"),
+                "saidas": dados.get("saidas"),
+                "saidas_mes_anterior": dados.get("saidas_mes_anterior"),
+                "variacao_saidas": dados.get("variacoes_saidas"),
+                "saldo_operacional": dados.get("saldo_operacional"),
+                "saldo_operacional_mes_anterior": dados.get("saldo_operacional_mes_anterior"),
+                "variacao_saldo_operacional": dados.get("variacao_saldo_operacional"),
             }
         )
