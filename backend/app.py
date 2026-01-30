@@ -4,18 +4,28 @@ import pandas as pd
 
 API_URL = "http://127.0.0.1:8000/perguntar"
 
-st.title("Assistente de Fluxo de Caixa")
+st.set_page_config(page_title="Fluxo de Caixa", layout="wide")
+st.title("📊 Assistente de Fluxo de Caixa")
 
+# ============================
+# ESTADO
+# ============================
 if "resposta" not in st.session_state:
     st.session_state.resposta = {}
 
+if "contexto" not in st.session_state:
+    st.session_state.contexto = {}
+
+# ============================
+# FUNÇÃO DE ENVIO
+# ============================
 def enviar():
     try:
         response = requests.post(
             API_URL,
             json={
                 "pergunta": st.session_state.pergunta,
-                "contexto": st.session_state.get("contexto", {})
+                "contexto": st.session_state.contexto
             },
             timeout=30
         )
@@ -26,38 +36,44 @@ def enviar():
         st.session_state.resposta = {
             "success": False,
             "message": str(e),
-            "data": {}
+            "data": None
         }
 
     st.session_state.pergunta = ""
 
 
+# ============================
+# INPUT
+# ============================
 st.text_input(
-    "Pergunte algo sobre o fluxo de caixa",
+    "Pergunte algo sobre o fluxo de caixa:",
     key="pergunta",
     on_change=enviar
 )
 
 # ============================
-# 🔥 PROTEÇÃO DEFINITIVA
+# RESPOSTA
 # ============================
 data = st.session_state.resposta or {}
 
-# ============================
-# RESPOSTA PRINCIPAL
-# ============================
+# ---------- TEXTO ----------
 if isinstance(data, dict) and data.get("message"):
     st.markdown(data["message"])
 
-# ============================
-# DETALHES
-# ============================
-detalhes = (
-    data.get("data", {}).get("detalhes")
-    if isinstance(data.get("data"), dict)
-    else None
-)
+# ---------- VISUALIZAÇÃO ----------
+data_api = data.get("data", {})
+resultado = data_api.get("resultado", {})
+visualizacao = data_api.get("visualizacao")
 
-if detalhes:
-    st.subheader("📊 Detalhes")
-    st.dataframe(pd.DataFrame([detalhes]))
+# ---------- TABELA ----------
+if visualizacao == "tabela":
+    detalhes = resultado.get("detalhes", {})
+    tabela = detalhes.get("tabela")
+
+    if tabela:
+        st.subheader("📋 Detalhamento")
+        st.dataframe(pd.DataFrame(tabela), use_container_width=True)
+
+# ---------- DEBUG (opcional) ----------
+with st.expander("🔍 Debug (dados brutos)"):
+    st.json(data)

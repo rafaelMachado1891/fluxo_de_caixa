@@ -3,6 +3,8 @@ from metricas.registry import REGISTRY, carregar_metricas
 from planner.planner import interpretar_pergunta
 from .conversational_agent import AgenteConversacionalLLM
 from logs.logger import setup_logger
+from models.schema import ApiResponse, ApiMeta, ApiData
+from agentes.visualizacao import decidir_visualizacao
 
 
 logger = setup_logger()
@@ -51,85 +53,65 @@ def atualizar_contexto(contexto: dict, plano: dict):
 def responder_usuario(pergunta: str, contexto: dict | None = None):
     inicio = time.time()
 
-    logger.info({
-        "evento": "pergunta_recebida",
-        "pergunta": pergunta
-    })
-
     try:
-        # ==========================
-        # 1️⃣ VALIDAÇÃO
-        # ==========================
         if not pergunta or len(pergunta.strip()) < 5:
-            return "A pergunta é muito curta ou inválida."
+            return ApiResponse(
+                success=False,
+                status="erro",
+                message="A pergunta é muito curta ou inválida.",
+                data=None,
+                meta=ApiMeta(tempo_execucao=0)
+            )
 
-        # ==========================
-        # 2️⃣ PLANEJAMENTO
-        # ==========================
         plano = interpretar_pergunta(pergunta, REGISTRY)
-
-        # 🧠 Resolve contexto implícito
         plano = resolver_contexto(plano, contexto)
-
-        logger.info({
-            "evento": "plano_resolvido",
-            "plano": plano
-        })
 
         nome_metrica = plano.get("metrica")
         if not nome_metrica or nome_metrica not in REGISTRY:
-            return "Não encontrei uma métrica válida para essa pergunta."
+            return ApiResponse(
+                success=False,
+                status="erro",
+                message="Não encontrei uma métrica válida para essa pergunta.",
+                data=None,
+                meta=ApiMeta(tempo_execucao=0)
+            )
 
-        # ==========================
-        # 3️⃣ EXECUÇÃO DA MÉTRICA
-        # ==========================
         metrica = REGISTRY[nome_metrica]
         params = {k: v for k, v in plano.items() if k != "metrica"}
 
         resultado = metrica.executar(**params)
-        resultado_dict = resultado.model_dump()
 
-        logger.info({
-            "evento": "metrica_executada",
-            "metrica": nome_metrica,
-            "resultado": resultado_dict
-        })
+        visualizacao = decidir_visualizacao(resultado)
 
-        # ==========================
-        # 4️⃣ ATUALIZA CONTEXTO
-        # ==========================
-        atualizar_contexto(contexto, plano)
-
-        # ==========================
-        # 5️⃣ RESPOSTA DO LLM
-        # ==========================
-        resposta = _agente.responder(
+        texto = _agente.responder(
             pergunta=pergunta,
             plano=plano,
-            resultado=resultado_dict,
+            resultado=resultado,
             contexto=contexto
         )
 
-        duracao = round(time.time() - inicio, 3)
+        status = "ok" if resultado.valor is not None else "sem_dados"
 
-        return {
-            "success": True,
-            "message": resposta,
-            "data": {
-                "metrica": nome_metrica,
-                "resultado": resultado_dict,
-                "detalhes": resultado_dict.get("detalhes")
-            },
-            "meta": {
-                "tempo_execucao": duracao,
-                "fonte": "motor_analitico_v1"
-            }
-        }
+        return ApiResponse(
+            success=status == "ok",
+            status=status,
+            message=texto,
+            data=ApiData(
+                resultado=resultado,
+                visualizacao=visualizacao
+            ),
+            meta=ApiMeta(
+                tempo_execucao=round(time.time() - inicio, 3)
+            )
+        )
 
     except Exception as e:
-        logger.exception({
-            "evento": "erro_no_fluxo",
-            "erro": str(e)
-        })
+        logger.exception("Erro no fluxo")
 
-        return "Erro interno ao processar a solicitação."
+        return ApiResponse(
+            success=False,
+            status="erro",
+            message="Erro interno ao processar a solicitação.",
+            data=None,
+            meta=ApiMeta(tempo_execucao=round(time.time() - inicio, 3))
+        )

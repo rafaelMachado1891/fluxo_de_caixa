@@ -10,13 +10,12 @@ _client = OpenAI(api_key=os.getenv("API_KEY"))
 
 class AgenteConversacional:
     def responder(self, pergunta, plano, resultado, contexto=None):
-        status = resultado["status"]
-
-        if status == "sem_dados":
+        """
+        Fallback sem LLM.
+        Usa apenas dados estruturados.
+        """
+        if resultado.valor is None:
             return self._resposta_sem_dados(resultado)
-
-        if status == "erro":
-            return "⚠️ Ocorreu um erro ao calcular a métrica."
 
         return self._resposta_ok(resultado)
 
@@ -25,9 +24,9 @@ class AgenteConversacional:
         return f"⚠️ Não há dados disponíveis para {periodo}."
 
     def _resposta_ok(self, resultado):
-        valor = resultado["valor"]
-        unidade = resultado["unidade"]
-        metrica = resultado["metrica"]
+        valor = resultado.valor
+        unidade = resultado.unidade
+        metrica = resultado.metrica
         periodo = self._formatar_periodo(resultado)
 
         valor_fmt = self._formatar_valor(valor, unidade)
@@ -38,20 +37,16 @@ class AgenteConversacional:
             f"O valor apurado foi **{valor_fmt}**."
         )
 
-        if resultado["detalhes"]:
-            resposta += self._renderizar_detalhes(resultado["detalhes"])
+        if resultado.detalhes:
+            resposta += self._renderizar_detalhes(resultado.detalhes)
 
         return resposta
 
     def _formatar_periodo(self, resultado):
-        mes = resultado.get("mes")
-        ano = resultado.get("ano")
-
-        if mes and ano:
-            return f"{mes:02d}/{ano}"
-        if ano:
-            return str(ano)
-
+        if resultado.mes and resultado.ano:
+            return f"{resultado.mes:02d}/{resultado.ano}"
+        if resultado.ano:
+            return str(resultado.ano)
         return "período atual"
 
     def _formatar_valor(self, valor, unidade):
@@ -73,11 +68,11 @@ class AgenteConversacional:
             return ""
 
         return "\n\n### 🔎 Detalhamento\n" + "\n".join(linhas)
-
+    
 
 class AgenteConversacionalLLM(AgenteConversacional):
 
-    def responder(self, pergunta, plano, resultado,analise=None, contexto=None):
+    def responder(self, pergunta, plano, resultado, analise=None, contexto=None):
         prompt = self._montar_prompt(pergunta, plano, resultado, analise, contexto)
         try:
             return self._chamar_llm(prompt)
@@ -85,8 +80,7 @@ class AgenteConversacionalLLM(AgenteConversacional):
             return super().responder(pergunta, plano, resultado, contexto)
 
     def _montar_prompt(self, pergunta, plano, resultado, analise=None, contexto=None):
-
-        resultado_json = normalizar_para_json(resultado)
+        resultado_json = resultado.model_dump(mode="json")
 
         return f"""
 Você é um assistente financeiro.
