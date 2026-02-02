@@ -18,10 +18,9 @@ class CoberturaDeCaixa(Metrica):
         return ResultadoMetrica(
             metrica =  self.nome,
             valor = resposta,
-            status = "ok" if resposta is not None else "sem_dados",
             ano = None,
             mes = None,
-            unidade = "BRL",
+            unidade = "mes",
             tipo = self.fluxo,
             dominio = self.dominio,
             detalhes = None

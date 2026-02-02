@@ -1,6 +1,7 @@
 from metricas.base import Metrica
 from metrics import calcular_variacoes_saidas_entradas_saldo_operacional
 from models.schema import ResultadoMetrica
+import pandas as pd
 
 
 class VariacoesMetricas(Metrica):
@@ -16,7 +17,10 @@ class VariacoesMetricas(Metrica):
         "variação",
         "relação",
         "piora",
-        "melhora"
+        "melhora",
+        "saidas",
+        "entradas",
+        "saldo operacional"
     ]
 
     parametros = {
@@ -31,11 +35,12 @@ class VariacoesMetricas(Metrica):
             mes=kwargs.get("mes")
         )
 
+        df = pd.DataFrame(registros)
+
         if not registros:
             return ResultadoMetrica(
                 metrica=self.nome,
                 valor=None,
-                status="sem_dados",
                 ano=kwargs.get("ano"),
                 mes=kwargs.get("mes"),
                 unidade="BRL",
@@ -44,26 +49,38 @@ class VariacoesMetricas(Metrica):
                 detalhes=None
             )
 
-        dados = registros[0]  # ✅ sempre dict
+        entradas = df["entradas"]
+        entradas_mes_anterior = df['entradas_mes_anterior']
+        variacao_entradas = df["variacao_entradas"]
+
+        saidas = df["saidas"]
+        saidas_mes_anterior = df["saidas_mes_anterior"]
+        variacao_saidas = df["variacao_saidas"]
+
+        saldo_operacional = df["saldo_operacional"]
+        saldo_operacional_mes_anterior = df["saldo_operacional_mes_anterior"]
+        variacao_saldo_operacional = df["variacao_saldo_operacional"]
+
+
+        
 
         return ResultadoMetrica(
             metrica=self.nome,
             valor=None,
-            status="ok",
             ano=kwargs.get("ano"),
             mes=kwargs.get("mes"),
             unidade="BRL",
             tipo=self.fluxo,
             dominio=self.dominio,
             detalhes={
-                "entradas": dados.get("entradas"),
-                "entradas_mes_anterior": dados.get("entradas_mes_anterior"),
-                "variacao_entradas": dados.get("variacoes_entradas"),
-                "saidas": dados.get("saidas"),
-                "saidas_mes_anterior": dados.get("saidas_mes_anterior"),
-                "variacao_saidas": dados.get("variacoes_saidas"),
-                "saldo_operacional": dados.get("saldo_operacional"),
-                "saldo_operacional_mes_anterior": dados.get("saldo_operacional_mes_anterior"),
-                "variacao_saldo_operacional": dados.get("variacao_saldo_operacional"),
+                "entradas": entradas,
+                "entradas_mes_anterior": entradas_mes_anterior,
+                "variacao_entradas": variacao_entradas,
+                "saidas": saidas,
+                "saidas_mes_anterior": saidas_mes_anterior,
+                "variacao_saidas": variacao_saidas,
+                "saldo_operacional": saldo_operacional,
+                "saldo_operacional_mes_anterior": saldo_operacional_mes_anterior,
+                "variacao_saldo_operacional": variacao_saldo_operacional,
             }
         )

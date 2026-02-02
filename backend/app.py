@@ -61,9 +61,14 @@ if isinstance(data, dict) and data.get("message"):
     st.markdown(data["message"])
 
 # ---------- VISUALIZAÇÃO ----------
-data_api = data.get("data", {})
-resultado = data_api.get("resultado", {})
-visualizacao = data_api.get("visualizacao")
+data_api = data.get("data")
+
+if isinstance(data_api, dict):
+    resultado = data_api.get("resultado", {})
+    visualizacao = data_api.get("visualizacao")
+else:
+    resultado = {}
+    visualizacao = None
 
 # ---------- TABELA ----------
 if visualizacao == "tabela":

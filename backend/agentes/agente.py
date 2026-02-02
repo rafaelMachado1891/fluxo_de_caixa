@@ -53,8 +53,19 @@ def atualizar_contexto(contexto: dict, plano: dict):
 def responder_usuario(pergunta: str, contexto: dict | None = None):
     inicio = time.time()
 
+    logger.info({
+        "evento": "pergunta_recebida",
+        "pergunta": pergunta,
+        "contexto": contexto
+    })
+
     try:
         if not pergunta or len(pergunta.strip()) < 5:
+            logger.warning({
+                "evento": "pergunta_invalida",
+                "pergunta": pergunta
+            })
+
             return ApiResponse(
                 success=False,
                 status="erro",
@@ -64,10 +75,27 @@ def responder_usuario(pergunta: str, contexto: dict | None = None):
             )
 
         plano = interpretar_pergunta(pergunta, REGISTRY)
+
+        logger.info({
+            "evento": "plano_interpretado",
+            "plano": plano
+        })
+
         plano = resolver_contexto(plano, contexto)
+
+        logger.info({
+            "evento": "plano_apos_contexto",
+            "plano": plano
+        })
 
         nome_metrica = plano.get("metrica")
         if not nome_metrica or nome_metrica not in REGISTRY:
+
+            logger.info({
+                "evento": "metrica_nao_encontrada",
+                "plano": plano
+            })
+
             return ApiResponse(
                 success=False,
                 status="erro",
@@ -75,13 +103,33 @@ def responder_usuario(pergunta: str, contexto: dict | None = None):
                 data=None,
                 meta=ApiMeta(tempo_execucao=0)
             )
+        
+        logger.info({
+            "evento": "metrica_selecionada",
+            "plano": plano
+        })
 
         metrica = REGISTRY[nome_metrica]
         params = {k: v for k, v in plano.items() if k != "metrica"}
 
+        logger.info({
+            "evento": "executando_metrica",
+            "parametros": params
+        })
+
         resultado = metrica.executar(**params)
 
+        logger.info({
+            "evento": "metrica_executada",
+            "resultado": resultado.dict()
+        })
+
         visualizacao = decidir_visualizacao(resultado)
+
+        logger.info({
+            "evento": "escolher_visualizacao",
+            "visualizacao": visualizacao
+        })
 
         texto = _agente.responder(
             pergunta=pergunta,
@@ -90,11 +138,16 @@ def responder_usuario(pergunta: str, contexto: dict | None = None):
             contexto=contexto
         )
 
-        status = "ok" if resultado.valor is not None else "sem_dados"
+        logger.info({
+            "evento": "resposta_gerada",
+            "resposta": texto[:120]
+        })
+
+        
 
         return ApiResponse(
-            success=status == "ok",
-            status=status,
+            success=True,
+            status="ok",
             message=texto,
             data=ApiData(
                 resultado=resultado,
@@ -106,7 +159,10 @@ def responder_usuario(pergunta: str, contexto: dict | None = None):
         )
 
     except Exception as e:
-        logger.exception("Erro no fluxo")
+        logger.exception({
+            "evento": "erro_no_fluxo",
+            "erro": str(e)
+        })
 
         return ApiResponse(
             success=False,

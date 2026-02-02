@@ -28,7 +28,6 @@ class SaldoFinalProjetado(Metrica):
         return ResultadoMetrica(
             metrica=self.nome,
             valor=saldo,
-            status="ok" if saldo is not None else "sem_dados",
             ano=kwargs.get("ano"),
             mes=kwargs.get("mes"),
             unidade="BRL",

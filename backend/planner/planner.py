@@ -4,9 +4,14 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from metricas.base import Metrica
 from planner.prompt import montar_system_prompt
+from logs.logger import setup_logger
+
+
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv("API_KEY"))
+
+logger = setup_logger()
 
 
 def interpretar_pergunta(
@@ -23,23 +28,78 @@ def interpretar_pergunta(
     - Nunca lança exceção
     - Nunca retorna metrica inválida
     """
+    logger.info({
+        "evento": "planner_inicio",
+        "pergunta": pergunta,
+        "contexto": contexto
+    })
 
     pergunta_lower = pergunta.lower()
 
-    # ==========================
-    # 1️⃣ TENTATIVA POR TAG
-    # ==========================
+    termos_variacao = [
+        "aumentou", "reduziu", "diminuiu", "cresceu",
+        "piorou", "melhorou", "comparado",
+        "em relação", "variação", "aumentaram", "diminuiram"
+    ]
+
+    # =====================================================
+    # 1️⃣ REGRA ABSOLUTA: VARIAÇÃO
+    # =====================================================
+    if any(t in pergunta_lower for t in termos_variacao):
+        logger.info({
+            "evento": "detecao_variacao",
+            "motivo": "termo_detectado"
+        })
+
+        if contexto and contexto.get("ultima_metrica"):
+            plano = {
+                "metrica": "análise de variação do fluxo de caixa",
+                "ano": contexto.get("ultimo_ano"),
+                "mes": contexto.get("ultimo_mes")
+            }
+
+            logger.info({
+                "evento": "plano_variacao",
+                "plano": plano
+            })
+
+            return plano
+
+        # fallback se não houver contexto
+        logger.warning({
+            "evento": "variacao_sem_contexto"
+        })
+
+        return {
+            "metrica": "análise de variação do fluxo de caixa"
+        }
+
+    # =====================================================
+    # 2️⃣ BUSCA POR TAG (SÓ SE NÃO FOR VARIAÇÃO)
+    # =====================================================
     for nome, metrica in registry.items():
         for tag in getattr(metrica, "tags", []):
             if tag in pergunta_lower:
-                return {
+                plano = {
                     "metrica": nome,
                     **extrair_parametros(pergunta)
                 }
 
-    # ==========================
-    # 2️⃣ CHAMADA AO LLM
-    # ==========================
+                logger.info({
+                    "evento": "plano_por_tag",
+                    "tag": tag,
+                    "plano": plano
+                })
+
+                return plano
+            
+
+    logger.info({
+        "evento": "fallback_llm",
+        "motivo": "nenhuma_tag_encontrada"
+    })
+
+ 
     system_prompt = montar_system_prompt(registry)
 
     resposta = client.chat.completions.create(
@@ -53,9 +113,21 @@ def interpretar_pergunta(
 
     conteudo = resposta.choices[0].message.content.strip()
 
+    logger.info({
+        "evento": "resposta_llm",
+        "conteudo_bruto": conteudo
+    })
+
     try:
         plano = json.loads(conteudo)
+
     except json.JSONDecodeError:
+
+        logger.error({
+            "evento": "erro_json_llm",
+            "conteudo": conteudo
+        })
+
         return {"metrica": None}
 
     # ==========================
@@ -64,15 +136,34 @@ def interpretar_pergunta(
     metrica = plano.get("metrica")
 
     if not metrica or metrica == "INDETERMINADO":
+
+        logger.warning({
+            "evento": "metrica_indeterminada",
+            "plano": plano
+        })
+
         return {"metrica": None}
 
     if metrica not in registry:
+
+        logger.warning({
+            "evento": "metrica_invalida",
+            "metrica": metrica
+        })
+
         return {"metrica": None}
 
-    return {
+    plano_final =  {
         "metrica": metrica,
         **plano.get("parametros", {})
     }
+
+    logger.info({
+        "evento": "plano_final",
+        "plano": plano_final
+    })
+
+    return plano_final
 
 
 def extrair_parametros(pergunta: str) -> dict:
