@@ -14,29 +14,31 @@ _agente = AgenteConversacionalLLM()
 
 
 def resolver_contexto(plano: dict, contexto: dict | None):
-    """
-    Resolve perguntas implícitas como:
-    'melhorou?', 'piorou?', 'aumentou?'
-    usando o último contexto válido.
-    """
-    if plano.get("metrica"):
+    # se não for variação, não mexe
+    if plano.get("metrica") != "analise_variacao_fluxo_caixa":
         return plano
 
-    if not contexto:
-        return plano
+    if not contexto or "periodo_referencia" not in contexto:
+        raise ValueError(
+            "Não tenho um período de referência para comparar."
+        )
 
-    ultima_metrica = contexto.get("ultima_metrica")
-    ultimo_mes = contexto.get("ultimo_mes")
-    ultimo_ano = contexto.get("ultimo_ano")
+    periodo_atual = contexto["periodo_referencia"]
 
-    if not ultima_metrica:
-        return plano
-
-    # assume que perguntas sem métrica são comparações
+    # o planner DEVE ter extraído o período base
+    periodo_base = plano.get("periodo_base")
+    if not periodo_base:
+        raise ValueError(
+            "Não entendi qual período você quer usar como comparação."
+        )
+    
+     # monta parâmetros explícitos para a métrica
     return {
-        "metrica": f"variacao_{ultima_metrica}",
-        "ano": ultimo_ano,
-        "mes": ultimo_mes
+        "metrica": "analise_variacao_fluxo_caixa",
+        "ano_atual": periodo_atual["ano"],
+        "mes_atual": periodo_atual["mes"],
+        "ano_base": periodo_base["ano"],
+        "mes_base": periodo_base["mes"]
     }
 
 
@@ -44,10 +46,14 @@ def atualizar_contexto(contexto: dict, plano: dict):
     """Salva o estado da conversa"""
     if contexto is None:
         return
+    
+    if plano.get("ano") and plano.get("mes"):
+        contexto["periodo_referencia"] = {
+            "ano": plano["ano"],
+            "mes": plano["mes"]
+        }
 
     contexto["ultima_metrica"] = plano.get("metrica")
-    contexto["ultimo_ano"] = plano.get("ano")
-    contexto["ultimo_mes"] = plano.get("mes")
 
 
 def responder_usuario(pergunta: str, contexto: dict | None = None):
@@ -123,6 +129,8 @@ def responder_usuario(pergunta: str, contexto: dict | None = None):
             "evento": "metrica_executada",
             "resultado": resultado.dict()
         })
+
+        atualizar_contexto(contexto, plano)
 
         visualizacao = decidir_visualizacao(resultado)
 

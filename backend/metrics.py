@@ -216,10 +216,10 @@ variacoes AS (
 		ano_mes,
 		entradas,
 		LAG(entradas) OVER(ORDER BY ano_mes) AS entradas_mes_anterior,
-		ROUND(entradas / LAG(entradas) OVER(ORDER BY ano_mes) -1,2)AS variacoes_entradas,
+		ROUND(entradas / LAG(entradas) OVER(ORDER BY ano_mes) -1,2)AS variacao_entradas,
 		saidas,
 		LAG(saidas) OVER(ORDER BY ano_mes) AS saidas_mes_anterior,
-		ROUND(saidas / LAG(saidas) OVER(ORDER BY ano_mes) -1,2)AS variacoes_saidas,
+		ROUND(saidas / LAG(saidas) OVER(ORDER BY ano_mes) -1,2)AS variacao_saidas,
 		saldo_operacional,
 		LAG(saldo_operacional) OVER(ORDER BY ano_mes) AS saldo_operacional_mes_anterior,
 		ROUND(saldo_operacional / LAG(saldo_operacional) OVER(ORDER BY ano_mes) -1,2) AS variacao_saldo_operacional

@@ -49,38 +49,57 @@ class VariacoesMetricas(Metrica):
                 detalhes=None
             )
 
-        entradas = df["entradas"]
-        entradas_mes_anterior = df['entradas_mes_anterior']
-        variacao_entradas = df["variacao_entradas"]
+        ano_mes = df.loc[0, "ano_mes"]
+        entradas = df.loc[0, "entradas"]
+        entradas_mes_anterior = df.loc[0, "entradas_mes_anterior"]
+        variacao_entradas = df.loc[0, "variacao_entradas"]
 
-        saidas = df["saidas"]
-        saidas_mes_anterior = df["saidas_mes_anterior"]
-        variacao_saidas = df["variacao_saidas"]
+        saidas = df.loc[0, "saidas"]
+        saidas_mes_anterior = df.loc[0, "saidas_mes_anterior"]
+        variacao_saidas = df.loc[0, "variacao_saidas"]
 
-        saldo_operacional = df["saldo_operacional"]
-        saldo_operacional_mes_anterior = df["saldo_operacional_mes_anterior"]
-        variacao_saldo_operacional = df["variacao_saldo_operacional"]
+        saldo_operacional = df.loc[0, "saldo_operacional"]
+        saldo_operacional_mes_anterior = df.loc[0, "saldo_operacional_mes_anterior"]
+        variacao_saldo_operacional = df.loc[0, "variacao_saldo_operacional"]  
 
+        resumo = {
+            "ano_mes": ano_mes,
+            "entradas_atual": entradas,
+            "entradas_base": entradas_mes_anterior,
+            "variacao_entradas": variacao_entradas,
 
-        
+            "saidas_atual": saidas,
+            "saidas_base": saidas_mes_anterior,
+            "variacao_saidas": variacao_saidas,
+
+            "saldo_atual": saldo_operacional,
+            "saldo_base": saldo_operacional_mes_anterior,
+            "variacao_saldo": variacao_saldo_operacional
+        }
+
+        tabela = df[[
+                    "ano_mes",
+                    "entradas",
+                    "entradas_mes_anterior",
+                    "variacao_entradas",
+                    "saidas",
+                    "saidas_mes_anterior",
+                    "variacao_saidas",
+                    "saldo_operacional",
+                    "saldo_operacional_mes_anterior",
+                    "variacao_saldo_operacional"
+                ]].to_dict(orient="records")
 
         return ResultadoMetrica(
             metrica=self.nome,
-            valor=None,
+            valor=variacao_saldo_operacional,
             ano=kwargs.get("ano"),
             mes=kwargs.get("mes"),
             unidade="BRL",
             tipo=self.fluxo,
             dominio=self.dominio,
             detalhes={
-                "entradas": entradas,
-                "entradas_mes_anterior": entradas_mes_anterior,
-                "variacao_entradas": variacao_entradas,
-                "saidas": saidas,
-                "saidas_mes_anterior": saidas_mes_anterior,
-                "variacao_saidas": variacao_saidas,
-                "saldo_operacional": saldo_operacional,
-                "saldo_operacional_mes_anterior": saldo_operacional_mes_anterior,
-                "variacao_saldo_operacional": variacao_saldo_operacional,
+                "resumo": resumo,
+                "tabela": tabela
             }
         )

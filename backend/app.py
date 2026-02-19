@@ -77,7 +77,7 @@ if visualizacao == "tabela":
 
     if tabela:
         st.subheader("📋 Detalhamento")
-        st.dataframe(pd.DataFrame(tabela), use_container_width=True)
+        st.dataframe(pd.DataFrame(tabela), use_container_width=True, hide_index=True)
 
 # ---------- DEBUG (opcional) ----------
 with st.expander("🔍 Debug (dados brutos)"):
