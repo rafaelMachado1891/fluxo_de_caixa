@@ -37,17 +37,16 @@ dw_fluxo_caixa/         projeto dbt
 
 ## Como rodar
 
-As instrucoes abaixo refletem a estrutura atual do repositorio, que separa a infraestrutura em dois arquivos `docker-compose`:
+As instrucoes abaixo consideram o fluxo correto do projeto:
 
-- [`src/docker-compose.yml`](src/docker-compose.yml): PostgreSQL e pgAdmin;
-- [`docker-compose.yml`](docker-compose.yml): servicos do Airflow.
+- [`src/docker-compose.yml`](src/docker-compose.yml): sobe PostgreSQL e pgAdmin;
+- `astro dev start`: sobe o ambiente local do Airflow via Astro CLI.
 
 ### Pre-requisitos
 
 - Python 3.11 ou compativel com as dependencias do projeto
-- Docker e Docker Compose
-- PostgreSQL acessivel pela aplicacao
-- dbt Core com adapter PostgreSQL
+- Docker Desktop com Docker Compose
+- Astro CLI instalada
 - chave `API_KEY` da OpenAI para a camada de assistente
 
 ### 1. Instale as dependencias Python
@@ -60,28 +59,17 @@ pip install -r requirements.txt
 
 ### 2. Configure as variaveis de ambiente
 
-O backend usa variaveis para conectar no PostgreSQL:
+Use o arquivo de exemplo como ponto de partida:
 
-```env
-POSTGRES_DB=...
-POSTGRES_USER=...
-POSTGRES_PASSWORD=...
-POSTGRES_HOST=...
-POSTGRES_PORT=...
-API_KEY=...
+```powershell
+Copy-Item .env_example .env
 ```
 
-O dbt usa o arquivo [`.dbt/profiles.yml`](.dbt/profiles.yml) e as variaveis abaixo, ja referenciadas em [`.env`](.env):
+Depois ajuste os valores conforme o seu ambiente. O arquivo [`.env_example`](.env_example) cobre:
 
-```env
-DBT_HOST=...
-DBT_USER=...
-DBT_PASSWORD=...
-DBT_PORT=5432
-DBT_DBNAME=...
-DBT_SCHEMA=public
-DBT_PROFILES_DIR=/usr/local/airflow/.dbt
-```
+- backend local via `POSTGRES_*`;
+- dbt/Airflow via `DBT_*`;
+- chave `API_KEY` da OpenAI.
 
 ### 3. Suba o PostgreSQL e o pgAdmin
 
@@ -104,24 +92,27 @@ Servicos disponibilizados:
 - `postgres_fluxo` na porta `5440`;
 - `pgadmin_fluxo` em `http://localhost:5050`.
 
-### 4. Rode a orquestracao com Airflow
+### 4. Rode a orquestracao com Airflow via Astro
 
-Suba os containers definidos no projeto:
+Com o banco em execucao, suba o projeto do Airflow com a Astro CLI:
 
 ```powershell
-docker compose up -d
+astro dev start
 ```
 
-Os servicos publicados nesse compose sao:
+Esse comando cria o ambiente local do Airflow para o projeto atual e publica a interface em:
 
-- `airflow-webserver` em `http://localhost:8080`
-- `airflow-scheduler`
+- `http://localhost:8080`
+
+Se for a primeira execucao, o processo pode levar alguns minutos por causa da criacao das imagens e containers locais.
 
 ### 5. Configure a conexao do Airflow
 
-O pipeline Python em [`src/pipeline.py`](src/pipeline.py) usa `BaseHook.get_connection("postgres_fluxo")`. Isso significa que a conexao `postgres_fluxo` precisa existir no Airflow para que a carga rode corretamente.
+O pipeline Python em [`src/pipeline.py`](src/pipeline.py) usa `BaseHook.get_connection("postgres_fluxo")`.
 
-Sem essa conexao, o comando `python src/main.py` ou a DAG `dag_executar_pipeline` nao conseguirao criar a engine de banco.
+Este repositorio ja deixa a conexao `postgres_fluxo` definida em [`airflow_settings.yaml`](airflow_settings.yaml) para o ambiente local do Astro. Com isso, ao subir com `astro dev start`, o Airflow ja deve conseguir se conectar ao banco usando os valores padrao documentados no [`.env_example`](.env_example).
+
+Se voce alterar usuario, senha, nome do banco ou porta interna do Postgres no compose, atualize tambem a conexao em [`airflow_settings.yaml`](airflow_settings.yaml).
 
 ### 6. Execute a DAG
 
@@ -131,7 +122,7 @@ A DAG principal esta em [`dags/dag.py`](dags/dag.py) e executa:
 2. `dbt seed`;
 3. `dbt run`.
 
-Depois de subir o Airflow e configurar a conexao `postgres_fluxo`, a DAG pode ser disparada pela interface web.
+Depois de subir o Airflow, a DAG pode ser disparada pela interface web.
 
 ### 7. Rodando a API localmente
 
@@ -157,6 +148,17 @@ streamlit run backend/app.py
 ```
 
 O frontend envia perguntas para a API em `http://127.0.0.1:8000/perguntar`.
+
+## Ordem recomendada de execucao
+
+Para evitar erros de configuracao, rode nesta sequencia:
+
+1. copie [`.env_example`](.env_example) para `.env`;
+2. crie a rede Docker `postgres_fluxo_network`, se necessario;
+3. suba PostgreSQL e pgAdmin com `docker compose -f src/docker-compose.yml up -d`;
+4. suba o Airflow com `astro dev start`;
+5. execute a DAG `dag_executar_pipeline`;
+6. inicie a API FastAPI e o frontend Streamlit, se quiser usar o assistente.
 
 ## Fluxo de execucao do projeto
 
