@@ -11,8 +11,8 @@ airflow:
       conn_type: postgres
       conn_host: fluxo_de_caixa
       conn_schema: fluxo_db
-      conn_login: postgres
-      conn_password: postgres
+      conn_login: administrador
+      conn_password: 189106
       conn_port: 5432
   pools:
     - pool_name:

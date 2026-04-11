@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  scheduler:
+    networks:
+      - airflow
+      - postgres_fluxo_network
+
+  api-server:
+    networks:
+      - airflow
+      - postgres_fluxo_network
+
+  dag-processor:
+    networks:
+      - airflow
+      - postgres_fluxo_network
+
+  triggerer:
+    networks:
+      - airflow
+      - postgres_fluxo_network
+
+networks:
+  postgres_fluxo_network:
+    external: true

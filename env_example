@@ -1,0 +1,5 @@
+POSTGRES_DB=fluxo_db
+POSTGRES_USER=seu_usuario_postgres
+POSTGRES_PASSWORD=sua_senha_postgres
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5440

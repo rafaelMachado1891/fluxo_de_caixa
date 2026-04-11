@@ -26,3 +26,4 @@ services:
 networks:
   postgres_fluxo_network:
     external: true
+    name: postgres_fluxo_network
