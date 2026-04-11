@@ -14,7 +14,7 @@ Este projeto foi construído para transformar registros financeiros dispersos em
 
 ## Arquitetura
 
-![Arquitetura do projeto](arquitetura.png)
+![Arquitetura do projeto](especificacao_projeto/arquitetura.png)
 
 De forma geral, a solução está organizada assim:
 
