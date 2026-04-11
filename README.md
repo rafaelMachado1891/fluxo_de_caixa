@@ -44,18 +44,32 @@ As instrucoes abaixo consideram o fluxo correto do projeto:
 
 ### Pre-requisitos
 
-- Python 3.11 ou compativel com as dependencias do projeto
+- Python 3.12.4 recomendado
 - Docker Desktop com Docker Compose
 - Astro CLI instalada
 - chave `API_KEY` da OpenAI para a camada de assistente
 
+> Observacao: o arquivo [`.python-version`](.python-version) aponta para Python `3.12.4`. Se voce estiver usando outra versao, vale validar compatibilidade antes de instalar os pacotes.
+
 ### 1. Instale as dependencias Python
+
+Se voce estiver no PowerShell:
 
 ```powershell
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
+
+Se voce estiver no Git Bash:
+
+```bash
+python -m venv .venv
+source .venv/Scripts/activate
+pip install -r requirements.txt
+```
+
+Se o comando `python -m venv .venv` travar ou for interrompido, apague a pasta `.venv` incompleta e rode novamente.
 
 ### 2. Configure as variaveis de ambiente
 
@@ -159,6 +173,30 @@ Para evitar erros de configuracao, rode nesta sequencia:
 4. suba o Airflow com `astro dev start`;
 5. execute a DAG `dag_executar_pipeline`;
 6. inicie a API FastAPI e o frontend Streamlit, se quiser usar o assistente.
+
+## Solucao de problemas
+
+### `Activate.ps1` nao funciona no Git Bash
+
+O comando abaixo e de PowerShell:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+No Git Bash, use:
+
+```bash
+source .venv/Scripts/activate
+```
+
+### `Could not open requirements file`
+
+Esse erro normalmente acontece quando o terminal nao esta na raiz do projeto. Antes de instalar, confirme se arquivos como [`README.md`](README.md) e [`requirements.txt`](requirements.txt) aparecem no diretorio atual.
+
+### `python -m venv .venv` foi interrompido
+
+Se a criacao do ambiente virtual parar no meio, remova a pasta `.venv` e tente outra vez. Uma criacao incompleta faz a ativacao falhar depois.
 
 ## Fluxo de execucao do projeto
 
