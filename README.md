@@ -211,4 +211,4 @@ O assistente foi pensado para responder de forma determinística sobre métricas
 
 ## Documentação
 
-- [Documentação geral do projeto](especificacao_projeto/especificação do projeto - versão 2.docx)
+- [Documentação geral do projeto](especificacao_projeto/especificação.docx)
