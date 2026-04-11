@@ -208,3 +208,7 @@ O assistente foi pensado para responder de forma determinística sobre métricas
 - FastAPI
 - Streamlit
 - OpenAI API
+
+## Documentação
+
+- [Documentação geral do projeto](especificacao_projeto/especificação do projeto - versão 2.docx)
